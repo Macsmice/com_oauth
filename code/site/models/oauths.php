@@ -109,7 +109,7 @@ class ComOauthModelOauths extends KModelAbstract
 		
 		if ($this->http_code == 401) 
 		{
-			echo $response;	
+			//echo $response;	
 		}
 		
 		return $response;
