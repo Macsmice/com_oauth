@@ -20,7 +20,7 @@ Simply download the package and symlink from the Joomla installation
 	`ln -s com_oauth_directory/admin com_oauth`
 ####/components:####
 	`ln -s com_oauth_directory/site com_oauth`
-
+ 
 USAGE
 -----
 
