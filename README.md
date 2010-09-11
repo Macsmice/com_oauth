@@ -86,4 +86,6 @@ $numberOfFollowers = $model->countFollowers());
 
 ?>
 
+At the moment Twitter, Google Contacts (OAuth 1.0a) and Facebook (which uses OAuth 2) are fully working, just look into their model to see how they work. You can add other functions in the model or in any other location, i.e. in the extension that uses com_oauth, but basically what should be best is trying to identify general purpose functions that are useful to everyone and put them in the com_oauth model, so feel free to fork, add what you think is right and push your modifications here :)
+
 Tested on Nooku Framework rev. 2513
