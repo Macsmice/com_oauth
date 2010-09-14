@@ -10,7 +10,7 @@
 $name = KRequest::get('get.view', 'string');
 $service = KFactory::get('site::com.oauth.model.sites')->slug($name)->getItem();
 $model = KFactory::get('site::com.oauth.model.'.KInflector::pluralize($name));
-$model->initialize(array($service->consumer_key, $service->consumer_secret));
+$model->initialize(array($service->consumer_key, $service->consumer_secret, 'http://'.$_SERVER['HTTP_HOST'].@route('view='.$name.'&layout=callback')));
 
 $app = KFactory::tmp('lib.joomla.application');
 $url = $model->getLoginUrl();
