@@ -9,7 +9,7 @@ Credits
 	 */
 
 Nooku Framework general OAuth client library
-Based on http://github.com/abraham/twitteroauth
+Uses PECL OAuth PHP extension http://pecl.php.net/package/oauth
 
 INSTALLATION
 ------------
@@ -38,35 +38,38 @@ $url .= '&return_url='.base64_encode('index.php?option=com_campaigns&view=campai
 
 com_oauth takes care of logging the user to the service and coming back, storing the token in the database if the user is logged in, or storing it in the user's session if not.
 
-After the user authorizes the application on the service, you can run the code you need, i.e.
+After the user authorizes the application on the service, you can run the code you need on the return_url you set, i.e.
 
 <?
 $user = KFactory::get('lib.joomla.user');
 $serviceName = KRequest::get('get.service', 'string');
 $service = KFactory::get('site::com.oauth.model.sites')->slug($serviceName)->getItem();	
 $model = KFactory::get('site::com.oauth.model.'.KInflector::pluralize($serviceName));
-
-$token = $model->getToken($serviceName);
-
-if ($token)
+				
+if ($model->getToken())
 {
-	$model->initialize(array($service->consumer_key, $service->consumer_secret, $token['oauth_token'], $token['oauth_token_secret']));
+	$model->initialize(array($service->consumer_key, $service->consumer_secret));
 }
 else
 {
-	$url =  'http://'.$_SERVER['HTTP_HOST'].KFactory::get('site::com.campaigns.view.campaign')->createRoute('view=campaign&layout=default&format=html&id='.KRequest::get('get.id', 'int').'&Itemid=206');												
+	$url =  'index.php';												
 	$message = "Invalid token";
 	KFactory::tmp('lib.joomla.application')->redirect($url, $message); 		
 }
 
 $mylogin = $model->getMyLogin();
-
-$this->assign('inviter', $mylogin);	
-
-$mylogin = $model->getMyLogin();
 $numberOfFollowers = $model->countFollowers());
+$model->sendMessage('test', array('joocode'));
 ?>
 
-At the moment Twitter, Google Contacts (OAuth 1.0a) and Facebook (which uses OAuth 2) are fully working, just look into their model to see how they work. You can add other functions in the model or in any other location, i.e. in the extension that uses com_oauth, but basically what should be best is trying to identify general purpose functions that are useful to everyone and put them in the com_oauth model, so feel free to fork, add what you think is right and push your modifications here :)
+You can add other functions in the model or in any other location, i.e. in the extension that uses com_oauth, but basically what should be best is trying to identify general purpose functions that are useful to everyone and put them in the com_oauth model so we can all use them, so feel free to fork, add what you think is right and push your modifications here :)
 
+CHANGELOG
+---------
+
+14/09/2010
+I'm migrating the models to the new PECL OAuth extension from the previous http://github.com/abraham/twitteroauth library. Now only Twitter works.
+
+09/09/2010
+At the moment Twitter, Google Contacts (OAuth 1.0a) and Facebook (which uses OAuth 2) are fully working, just look into their model to see how they work. 
 Tested on Nooku Framework rev. 2513

@@ -11,15 +11,16 @@ class ComOauthViewOauthHtml extends ComDefaultViewHtml
 {
 	public function display()
 	{
-		KRequest::set('session.caller_url', JRoute::_(base64_decode(KRequest::get('get.caller_url', 'url'))));
-		KRequest::set('session.return_url', JRoute::_(base64_decode(KRequest::get('get.return_url', 'url'))));
+		$caller_url = JRoute::_(base64_decode(KRequest::get('get.caller_url', 'url')));
+		$return_url = JRoute::_(base64_decode(KRequest::get('get.return_url', 'url')));
+		
+		KRequest::set('session.caller_url', $caller_url);
+		KRequest::set('session.return_url', $return_url);
 					
 		$user = KFactory::get('lib.joomla.user');
-		$app = KFactory::tmp('lib.joomla.application');
 		$url = '';
 
-		//TODO: if I already have the token in the session
-		$hasToken = false;
+		$hasToken = false;		
 		
 		if ($user->id)
 		{
@@ -33,7 +34,7 @@ class ComOauthViewOauthHtml extends ComDefaultViewHtml
 		}
 		else
 		{
-			if (KRequest::get('session.service', 'string') == KRequest::get('get.service', 'string') && KRequest::set('session.oauth_token', $token['oauth_token']))
+			if (KRequest::get('session.service', 'string') == KRequest::get('get.service', 'string') && KRequest::get('session.oauth_token', 'string'))
 			{
 				$hasToken = true;
 			} 
@@ -44,10 +45,10 @@ class ComOauthViewOauthHtml extends ComDefaultViewHtml
 			$url = JRoute::_(base64_decode(KRequest::get('get.return_url', 'url')));
 		}
 		else
-		{
+		{	
 			$url = JRoute::_('index.php?option=com_oauth&view='.KRequest::get('get.service', 'string').'&layout=redirect'); 
 		}
 		
-		$app->redirect($url);
+		KFactory::tmp('lib.joomla.application')->redirect($url);
 	}
 }

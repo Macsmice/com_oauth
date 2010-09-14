@@ -37,15 +37,12 @@ class ComOauthModelTwitters extends ComOauthModelOauths
 	 */
 	function fetchContacts()
 	{		
-		$credentials = json_decode($this->get($this->host.'account/verify_credentials.json')); 
+		$this->fetch($this->host.'account/verify_credentials.json');
+		$credentials = json_decode($this->getLastResponse());
 		
-		$ids = $this->get($this->host.'followers/ids.json', array('screen_name' => $credentials->screen_name));
-		//remove unneeded chars from response
-		$ids = str_replace('[', '', $ids);
-		$ids = str_replace(']', '', $ids);
-		$ids = explode(',',$ids);
+		$this->fetch($this->host.'followers/ids.json', array('screen_name' => $credentials->screen_name));
+		$ids = json_decode($this->getLastResponse());
 
-		//$ids = array_slice($ids, 0, 10);
 		$chunks = array_chunk($ids, 100);
 				
 		$twittercontacts = null;
@@ -53,22 +50,20 @@ class ComOauthModelTwitters extends ComOauthModelOauths
 		/* Twitter returns only the ids of the followers calling followers/ids.json. We then need to call users/lookup.json passing max 100 ids each call. */	
 		foreach ($chunks as $chunk)
 		{
-			$contactsdetails = $this->get($this->host.'users/lookup.json', array('user_id' => implode(', ', $chunk)));
-
+			$this->fetch($this->host.'users/lookup.json', array('user_id' => implode(', ', $chunk)));
+			$contactsdetails = json_decode($this->getLastResponse());
+			
 			if ($twittercontacts == null)
 			{
-				$twittercontacts = json_decode($contactsdetails);
+				$twittercontacts = $contactsdetails;
 			}
 			else
 			{
-				$json = json_decode($contactsdetails);
-
-				if (is_array($json)) 
+				if (is_array($contactsdetails)) 
 				{
-					$twittercontacts = array_merge($twittercontacts, $json);	
+					$twittercontacts = array_merge($twittercontacts, $$contactsdetails);	
 				}
-			}
-				
+			}	
 		}		
 		
 		$contacts = array();
@@ -82,7 +77,7 @@ class ComOauthModelTwitters extends ComOauthModelOauths
 			
 			$contacts[] = $contact; 
 		}
-		
+
 		return $contacts;
 	}
 	
@@ -98,7 +93,8 @@ class ComOauthModelTwitters extends ComOauthModelOauths
 		{	
 			foreach ($ids as $id) 
 			{
-				$res = $this->post($this->host.'direct_messages/new.json', array('screen_name' => $id, 'text' => $message));
+				$api_args = array("screen_name" => $id, "text" => $message);
+    			$this->fetch($this->host.'direct_messages/new.json', $api_args, OAUTH_HTTP_METHOD_POST, array("User-Agent" => "pecl/oauth"));
 			}			
 		}
  	}
@@ -109,8 +105,9 @@ class ComOauthModelTwitters extends ComOauthModelOauths
 	 * @param $message string no more than 140 chars
 	 */
 	function postMessage($message)
-	{
-		$this->post($this->host.'statuses/update.json', array('status' => $message));
+	{				
+    	$api_args = array("status" => $message, "empty_param" => NULL);
+    	$this->fetch($this->host.'statuses/update.json', $api_args, OAUTH_HTTP_METHOD_POST, array("User-Agent" => "pecl/oauth"));    	
 	}
 
 	/**
@@ -120,20 +117,25 @@ class ComOauthModelTwitters extends ComOauthModelOauths
 	 */
 	function getMyLogin()
 	{
-		$credentials = json_decode($this->get($this->host.'account/verify_credentials.json')); 
-		
+		$this->fetch($this->host.'account/verify_credentials.json');
+		$credentials = json_decode($this->getLastResponse());
+				
 		return $credentials->screen_name;
 	}
 	
+	/**
+	 * 
+	 * Return the followers count
+	 * @see com_oauth/code/site/models/ComOauthModelOauths::countFollowers()
+	 */
 	function countFollowers()
 	{
-		$credentials = json_decode($this->get($this->host.'account/verify_credentials.json')); 
+		$this->fetch($this->host.'account/verify_credentials.json');
+		$credentials = json_decode($this->getLastResponse());
 		
-		$ids = $this->get($this->host.'followers/ids.json', array('screen_name' => $credentials->screen_name));
-		//remove unneeded chars from response
-		$ids = str_replace('[', '', $ids);
-		$ids = str_replace(']', '', $ids);
-		$ids = explode(',',$ids);
+		$this->fetch($this->host.'followers/ids.json', array('screen_name' => $credentials->screen_name));
+		$ids = json_decode($this->getLastResponse());
+
 		return count($ids);
 	}
 }

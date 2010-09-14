@@ -9,193 +9,48 @@
 
 class ComOauthModelOauths extends KModelAbstract
 {
-	public $http_code;					/* Contains the last HTTP status code returned. */
-	public $url;						/* Contains the last API call. */
-	public $timeout = 30;				/* Set timeout default. */
-	public $connecttimeout = 30; 		/* Set connect timeout. */
-	public $ssl_verifypeer = FALSE; 	/* Verify SSL Cert. */
-	public $format = 'json';			/* Respons format. */
-	public $decode_json = TRUE; 		/* Decode returned json data. */
-	public $http_info;					/* Contains the last HTTP headers returned. */
-	public $useragent = 'com_oauth'; 	/* Set the useragent. */
-	//public $retry = TRUE;				/* Immediately retry the API call if the response was not successful. */
+	public $oauthc = null;
 
+	/**
+	 * 
+	 * Initializes the model
+	 * @param $options $options[0] is oauth_token, $options[1] is oauth_token_secret
+	 */
 	function initialize(array $options) 
 	{
-		$consumer_key = $options[0];
-		$consumer_secret = $options[1];
-		$oauth_token = @$options[2] ? @$options[2] : null;
-		$oauth_token_secret = @$options[3] ? @$options[3] : null;
-
-		$this->sha1_method = KFactory::tmp('site::com.oauth.libs.oauth.signaturemethodhmacsha1');
-		$this->consumer = KFactory::tmp('site::com.oauth.libs.oauth.consumer', array('key' => $consumer_key, 'secret' => $consumer_secret));
-
-		if (!empty($oauth_token) && !empty($oauth_token_secret)) 
+		try
 		{
-			$this->token = KFactory::tmp('site::com.oauth.libs.oauth.consumer', array('key' => $oauth_token, 'secret' => $oauth_token_secret));			
-		} 
-		else 
-		{
-			$this->token = NULL;
+			$this->oauthc = new OAuth($options[0], $options[1], OAUTH_SIG_METHOD_HMACSHA1, OAUTH_AUTH_TYPE_URI);
+			$token = $this->getToken();
+			$this->setToken($token['oauth_token'], $token['oauth_token_secret']);
 		}
-		return $this;
-	}
-
-	/**
-	 * 
-	 * Debug helpers
-	 */
-	function lastStatusCode() 
-	{ 
-		return $this->http_status; 
-	}
-
-	function lastAPICall() 
-	{ 
-		return $this->last_api_call; 
-	}
-
-	/**
-	 * 
-	 * Make an HTTP request
-	 *
-	 * @return API results
-	 */
-	function http($url, $method, $postfields = NULL) 
-	{
-		$this->http_info = array();
-		$ci = curl_init();
-		/* Curl settings */
-		curl_setopt($ci, CURLOPT_USERAGENT, $this->useragent);
-		curl_setopt($ci, CURLOPT_CONNECTTIMEOUT, $this->connecttimeout);
-		curl_setopt($ci, CURLOPT_TIMEOUT, $this->timeout);
-		curl_setopt($ci, CURLOPT_RETURNTRANSFER, true);
-
-	 
-		//var_dump($headerParams);
-		//echo '<br /><br />';
- 
-		curl_setopt($ci, CURLINFO_HEADER_OUT, true);
-
-		curl_setopt($ci, CURLOPT_SSL_VERIFYPEER, $this->ssl_verifypeer);
-		curl_setopt($ci, CURLOPT_HEADER, false);
-		curl_setopt($ci, CURLOPT_HEADERFUNCTION, array($this, 'getHeader'));
-
-		switch ($method) 
+		catch (OAuthException $e) 
 		{
-			case 'POST':
-				curl_setopt($ci, CURLOPT_POST, true);
-				if (!empty($postfields)) 
-				{
-					curl_setopt($ci, CURLOPT_POSTFIELDS, $postfields);
-				}
-				break;
-			case 'DELETE':
-				curl_setopt($ci, CURLOPT_CUSTOMREQUEST, 'DELETE');
-				if (!empty($postfields)) 
-				{
-					$url = "{$url}?{$postfields}";
-				}
+	 		echo "Exception caught!\n";
+		    echo "Response: ". $e->lastResponse . "\n";
 		}
-
-		curl_setopt($ci, CURLOPT_URL, $url);
+	}
 		
-		$response = curl_exec($ci);
-				
-		$this->http_code = curl_getinfo($ci, CURLINFO_HTTP_CODE);
-		$this->http_info = array_merge($this->http_info, curl_getinfo($ci));
-		$this->url = $url;
-		curl_close ($ci);
-		
-		if ($this->http_code == 401) 
-		{
-			//echo $response;	
-		}
-		
-		return $response;
-	}
-
-	/**
-	 * 
- 	 * Get the header info to store.
-	 */
-	function getHeader($ch, $header) 
-	{
-		$i = strpos($header, ':');
-
-		if (!empty($i)) 
-		{
-			$key = str_replace('-', '_', strtolower(substr($header, 0, $i)));
-			$value = trim(substr($header, $i + 2));
-			$this->http_header[$key] = $value;
-		}
-
-		return strlen($header);
-	}
-
 	/**
 	 * 
 	 * Get the request token
 	 * @returns a key/value array containing oauth_token and oauth_token_secret
 	 */
-	function getRequestToken($parameters = NULL) 
+	function getRequestToken($requestTokenUrl, $callbackUrl) 
 	{
-		$request = $this->oAuthRequest($this->requestTokenURL(), 'GET', $parameters);
-		$token = KFactory::get('site::com.oauth.libs.oauth.util')->parse_parameters($request);
-		$this->token = KFactory::get('site::com.oauth.libs.oauth.consumer', array('key' => @$token['oauth_token'], 'secret' => @$token['oauth_token_secret']));
-		return $token;
+		return $this->oauthc->getRequestToken($requestTokenUrl, $callbackUrl);
 	}
-
-	/**
-	 * 
-	 * Get the authorize URL
-	 * @returns a string
-	 */
-	function getAuthorizeURL($token, $sign_in_with_twitter = TRUE) 
-	{	
-		if (is_array($token)) 
-		{
-			$token = $token['oauth_token'];
-		}
-
-		if ($token)
-		{
-			return $this->authorizeURL() . "?oauth_token={$token}";
-		}
-		else 
-		{
-			return null;
-		}
-	}
-
-
-	/**
-	 * 
-	 * Exchange request token and secret for an access token and
-	 * secret, to sign API calls.
-	 *
-	 * @returns array("oauth_token" => "the-access-token",
-	 *                "oauth_token_secret" => "the-access-secret",
-	 *                "user_id" => "9436992",
-	 *                "screen_name" => "abraham")
-	 */
-	function getAccessToken($oauth_verifier = FALSE) 
+	
+	function setToken($oauth_token, $oauth_token_secret)
 	{
-		$parameters = array();
-
-		if (!empty($oauth_verifier)) 
-		{
-			$parameters['oauth_verifier'] = $oauth_verifier;
-		}
-
-		$request = $this->oAuthRequest($this->accessTokenURL(), 'GET', $parameters);
-		$token = KFactory::get('site::com.oauth.libs.oauth.util')->parse_parameters($request);
-				
-		$this->token = KFactory::tmp('site::com.oauth.libs.oauth.consumer', array('key' => $token['oauth_token'], 'secret' => $token['oauth_token_secret']));
-
-		return $token;
+		return $this->oauthc->setToken($oauth_token, $oauth_token_secret);
 	}
-
+	
+	function getAccessToken() 
+	{
+		return $this->oauthc->getAccessToken($this->accessTokenURL());
+	}
+	
 	/**
 	 * 
 	 * Store the token in the database table #__oauth_tokens if the user is registered, otherwise put the token in the session
@@ -253,6 +108,78 @@ class ComOauthModelOauths extends KModelAbstract
 			}
 		}
 	}
+	
+
+	/**
+	 * 
+	 * Return the current token for the given service
+	 * @param serviceName string the service slug
+	 */
+	function getToken()
+	{			
+		$user = KFactory::get('lib.joomla.user');
+		$service = KFactory::tmp('site::com.oauth.model.sites')->set('slug', KInflector::singularize($this->getIdentifier()->name))->getItem();	
+		
+		$return = null;
+		
+		//se sono loggato
+		if ($user->id)
+		{
+			$token = KFactory::tmp('site::com.oauth.model.tokens')
+				->set('service', KInflector::singularize($this->getIdentifier()->name))
+				->set('userid', $user->id)
+				->getList()->getData();		
+			$token = reset($token);
+			
+			if ($token)
+			{
+				$return = array();
+				$return['oauth_token'] = $token['oauth_token'];
+				$return['oauth_token_secret'] = $token['oauth_token_secret'];
+			}	
+		}
+		else
+		{
+			if (KRequest::get('session.oauth_token', 'string'))
+			{
+				$return = array();
+				$return['oauth_token'] = KRequest::get('session.oauth_token', 'string');
+				$return['oauth_token_secret'] = KRequest::get('session.oauth_token_secret', 'string');
+			}
+		}
+		
+		return $return;
+	}
+	
+	/**
+	 * 
+	 * Performs an API call
+	 * @param $url 
+	 * @param $extra_parameters an array of parameters
+	 * @param $http_method defaults to GET, use OAUTH_HTTP_METHOD_POST for POST
+	 * @param $http_headers additional headers you may want to send
+	 */
+	function fetch($url, $extra_parameters = null, $http_method = OAUTH_HTTP_METHOD_GET, $http_headers = array("User-Agent" => "pecl/oauth"))
+	{
+		try
+		{
+			return $this->oauthc->fetch($url, $extra_parameters, $http_method, $http_headers);
+		}
+		catch (OAuthException $e) 
+		{
+	 		echo "Exception caught!\n";
+		    echo "Response: ". $e->lastResponse . "\n";
+		}
+	}
+	
+	/**
+	 * 
+	 * Returns the last result from an API operation
+	 */
+	function getLastResponse()
+	{
+		return $this->oauthc->getLastResponse();
+	}
 
 	/**
 	 * 
@@ -278,178 +205,5 @@ class ComOauthModelOauths extends KModelAbstract
 			$message = 'Error: not 200';
 			$app->redirect($url, $message); 
 		}
-	}
-
-	/**
-	* One time exchange of username and password for access token and secret.
-	*
-	* @returns array("oauth_token" => "the-access-token",
-	*                "oauth_token_secret" => "the-access-secret",
-	*                "user_id" => "9436992",
-	*                "screen_name" => "abraham",
-	*                "x_auth_expires" => "0")
-	*/  
-	function getXAuthToken($username, $password) 
-	{
-		$parameters = array();
-		$parameters['x_auth_username'] = $username;
-		$parameters['x_auth_password'] = $password;
-		$parameters['x_auth_mode'] = 'client_auth';
-		$request = $this->oAuthRequest($this->accessTokenURL(), 'POST', $parameters);
-		$token = KFactory::get('site::com.oauth.libs.oauth.util')->parse_parameters($request);
-		$this->token = KFactory::tmp('site::com.oauth.libs.oauth.consumer', array('key' => $token['oauth_token'], 'secret' => $token['oauth_token_secret']));
-		return $token;
-	}
-
-	/**
-	 * 
- 	 * GET wrapper for oAuthRequest.
-	 */
-	function get($url, $parameters = array()) 
-	{
-		$response = $this->oAuthRequest($url, 'GET', $parameters);
-
-//		if ($this->format === 'json' && $this->decode_json) 
-//		{
-//			return json_decode($response);
-//		}
-
-		return $response;
-	}
-
-	/**
-	 * 
-	 * POST wrapper for oAuthRequest.
-	 */
-	function post($url, $parameters = array()) 
-	{
-		$response = $this->oAuthRequest($url, 'POST', $parameters);
-
-		if ($this->format === 'json' && $this->decode_json) 
-		{
-			return json_decode($response);
-		}
-
-		return $response;
-	}
-
-	/**
-	 * 
-	 * DELETE wrapper for oAuthReqeust.
-	 */
-	function delete($url, $parameters = array()) 
-	{
-		$response = $this->oAuthRequest($url, 'DELETE', $parameters);
-
-		if ($this->format === 'json' && $this->decode_json)
-		{
-			return json_decode($response);
-		}
-
-		return $response;
-	}
-
-	/**
-	 * 
-	 * Format and sign an OAuth / API request
-	 */
-	function oAuthRequest($url, $method, $parameters) 
-	{
-		if (strrpos($url, 'https://') !== 0 && strrpos($url, 'http://') !== 0) 
-		{
-			$url = "{$this->host}{$url}.{$this->format}";
-		}
-		
-		$request = KFactory::get('site::com.oauth.libs.oauth.request')->from_consumer_and_token($this->consumer, @$this->token, $method, $url, $parameters);
-		$request->sign_request($this->sha1_method, $this->consumer, @$this->token);
-		//echo $request->to_url();
-
-		switch ($method) 
-		{
-			case 'GET':
-				return $this->http($request->to_url(), 'GET', null);
-			default:
-				return $this->http($request->get_normalized_http_url(), $method, $request->to_postdata());
-		}
-	}
-
-	function getContacts()
-	{
-		$user = KFactory::get('lib.joomla.user');
-
-		if (KFactory::tmp('site::com.oauth.model.tokens')
-			->set('service', KRequest::get('get.service', 'string'))
-			->set('userid', $user->id)
-			->getTotal() > 0)
-		{
-			return $this->fetchContacts($this);
-		}
-		else
-		{
-			return array();
-		}		
-	}
-
-	/**
-	 * 
-	 * Return an array of objects featuring
-	 * - the contact ID (if the service provides a messaging system, such as Twitter or Facebook, the ID is the contact ID. Else, it is the contact e-mail
-	 * - the contact display name
-	 * - the contact avatar link
-	 */
-	function fetchContacts($model) {}
-
-	/**
-	 * 
-	 * Return the login name, to store in the db
-	 * @return string the login name
-	 */
-	function getMyLogin() {}
-	
-	/**
-	 * 
-	 * Return the followers count
-	 */
-	function countFollowers() {}
-	
-	/**
-	 * 
-	 * Return the current token for the given service
-	 * @param serviceName string the service slug
-	 */
-	function getToken($serviceName)
-	{			
-		$user = KFactory::get('lib.joomla.user');
-		$service = KFactory::get('site::com.oauth.model.sites')->slug($serviceName)->getItem();	
-		
-		$return = null;
-		
-		//se sono loggato
-		if ($user->id)
-		{
-			$token = KFactory::tmp('site::com.oauth.model.tokens')
-				->set('service', $name)
-				->set('userid', $user->id)
-				->getList()->getData();		
-			$token = reset($token);
-			
-			if ($token)
-			{
-				$return = array();
-				$return['oauth_token'] = $token['oauth_token'];
-				$return['oauth_token_secret'] = $token['oauth_token_secret'];
-			}	
-		}
-		else
-		{
-			if (KRequest::get('session.oauth_token', 'string'))
-			{
-				$return = array();
-				$return['oauth_token'] = KRequest::get('session.oauth_token', 'string');
-				$return['oauth_token_secret'] = KRequest::get('session.oauth_token_secret', 'string');
-			}
-		}
-		
-		return $return;
 	}
 }
