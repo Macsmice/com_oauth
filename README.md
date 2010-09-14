@@ -42,48 +42,29 @@ After the user authorizes the application on the service, you can run the code y
 
 <?
 $user = KFactory::get('lib.joomla.user');
-$name = KRequest::get('get.service', 'string');
-$service = KFactory::get('site::com.oauth.model.sites')->slug($name)->getItem();	
-$model = KFactory::get('site::com.oauth.model.'.KInflector::pluralize($name));
+$serviceName = KRequest::get('get.service', 'string');
+$service = KFactory::get('site::com.oauth.model.sites')->slug($serviceName)->getItem();	
+$model = KFactory::get('site::com.oauth.model.'.KInflector::pluralize($serviceName));
 
-if ($user->id)
+$token = $model->getToken($serviceName);
+
+if ($token)
 {
-	$token = KFactory::tmp('site::com.oauth.model.tokens')
-		->set('service', $name)
-		->set('userid', $user->id)
-		->getList()->getData();		
-	$token = reset($token);
-
-	if ($token)
-	{
-		$model->initialize(array($service->consumer_key, $service->consumer_secret, $token['oauth_token'], $token['oauth_token_secret']));
-	}	
-	else 
-	{
-		$url =  'index.php';												
-		$message = "Invalid token";
-		$app = KFactory::tmp('lib.joomla.application');
-		$app->redirect($url, $message); 		
-	}
+	$model->initialize(array($service->consumer_key, $service->consumer_secret, $token['oauth_token'], $token['oauth_token_secret']));
 }
 else
 {
-	if (KRequest::get('session.oauth_token', 'string'))
-	{
-		$model->initialize(array($service->consumer_key, $service->consumer_secret, KRequest::get('session.oauth_token', 'string'), KRequest::get('session.oauth_token_secret', 'string')));
-	}	
-	else 
-	{
-		$url =  'index.php';											
-		$message = "Invalid token";
-		$app = KFactory::tmp('lib.joomla.application');
-		$app->redirect($url, $message);
-	}
+	$url =  'http://'.$_SERVER['HTTP_HOST'].KFactory::get('site::com.campaigns.view.campaign')->createRoute('view=campaign&layout=default&format=html&id='.KRequest::get('get.id', 'int').'&Itemid=206');												
+	$message = "Invalid token";
+	KFactory::tmp('lib.joomla.application')->redirect($url, $message); 		
 }
 
 $mylogin = $model->getMyLogin();
-$numberOfFollowers = $model->countFollowers());
 
+$this->assign('inviter', $mylogin);	
+
+$mylogin = $model->getMyLogin();
+$numberOfFollowers = $model->countFollowers());
 ?>
 
 At the moment Twitter, Google Contacts (OAuth 1.0a) and Facebook (which uses OAuth 2) are fully working, just look into their model to see how they work. You can add other functions in the model or in any other location, i.e. in the extension that uses com_oauth, but basically what should be best is trying to identify general purpose functions that are useful to everyone and put them in the com_oauth model, so feel free to fork, add what you think is right and push your modifications here :)

@@ -18,10 +18,28 @@ class ComOauthViewOauthHtml extends ComDefaultViewHtml
 		$app = KFactory::tmp('lib.joomla.application');
 		$url = '';
 
-		if ($user->id && KFactory::tmp('site::com.oauth.model.tokens')
-			->set('service', KRequest::get('get.service', 'string'))
-			->set('userid', $user->id)
-			->getTotal() > 0)
+		//TODO: if I already have the token in the session
+		$hasToken = false;
+		
+		if ($user->id)
+		{
+			if (KFactory::tmp('site::com.oauth.model.tokens')
+				->set('service', KRequest::get('get.service', 'string'))
+				->set('userid', $user->id)
+				->getTotal())
+			{
+				$hasToken = true;
+			}
+		}
+		else
+		{
+			if (KRequest::get('session.service', 'string') == KRequest::get('get.service', 'string') && KRequest::set('session.oauth_token', $token['oauth_token']))
+			{
+				$hasToken = true;
+			} 
+		}
+		
+		if ($hasToken)
 		{
 			$url = JRoute::_(base64_decode(KRequest::get('get.return_url', 'url')));
 		}

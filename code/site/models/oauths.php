@@ -237,6 +237,8 @@ class ComOauthModelOauths extends KModelAbstract
 		}
 		else
 		{
+			//TODO: Storing the token this way, the user can only have 1 enabled service. Getting a token for a second service will overwrite the previous sessions, so 
+			//I need to have the name of the service in the variable itself.
 			KRequest::set('session.service', $service);
 
 			if (is_array($token))
@@ -409,4 +411,45 @@ class ComOauthModelOauths extends KModelAbstract
 	 * Return the followers count
 	 */
 	function countFollowers() {}
+	
+	/**
+	 * 
+	 * Return the current token for the given service
+	 * @param serviceName string the service slug
+	 */
+	function getToken($serviceName)
+	{			
+		$user = KFactory::get('lib.joomla.user');
+		$service = KFactory::get('site::com.oauth.model.sites')->slug($serviceName)->getItem();	
+		
+		$return = null;
+		
+		//se sono loggato
+		if ($user->id)
+		{
+			$token = KFactory::tmp('site::com.oauth.model.tokens')
+				->set('service', $name)
+				->set('userid', $user->id)
+				->getList()->getData();		
+			$token = reset($token);
+			
+			if ($token)
+			{
+				$return = array();
+				$return['oauth_token'] = $token['oauth_token'];
+				$return['oauth_token_secret'] = $token['oauth_token_secret'];
+			}	
+		}
+		else
+		{
+			if (KRequest::get('session.oauth_token', 'string'))
+			{
+				$return = array();
+				$return['oauth_token'] = KRequest::get('session.oauth_token', 'string');
+				$return['oauth_token_secret'] = KRequest::get('session.oauth_token_secret', 'string');
+			}
+		}
+		
+		return $return;
+	}
 }
