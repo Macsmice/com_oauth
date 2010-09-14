@@ -15,35 +15,6 @@ abstract class ComOauthModelOauth2s extends ComOauthModelOauths
 	 */
 	public $domainMap = null;
 	
-	/**
-	 * Get a Login URL for use with redirects. By default, full page redirect is
-	 * assumed. If you are using the generated URL with a window.open() call in
-	 * JavaScript, you can pass in display=popup as part of the $params.
-	 *
-	 * The parameters:
-	 * - next: the url to go to after a successful login
-	 * - cancel_url: the url to go to after the user cancels
-	 * - req_perms: comma separated list of requested extended perms
-	 * - display: can be "page" (default, full page) or "popup"
-	 *
-	 * @param Array $params provide custom parameters
-	 * @return String the URL for the login flow
-	 */
-	
-	abstract public function getLoginUrl($params=array());
-	
-	
-	/**
-	 * Get a Logout URL suitable for use with redirects.
-	 *
-	 * The parameters:
-	 * - next: the url to go to after a successful logout
-	 *
-	 * @param Array $params provide custom parameters
-	 * @return String the URL for the logout flow
-	 */
-	abstract public function getLogoutUrl($params=array());
-	
 	
 	/**
 	 * Gets a OAuth access token.
@@ -256,12 +227,7 @@ abstract class ComOauthModelOauth2s extends ComOauthModelOauths
 		parent::__construct($config);
 	}
 
-	function initialize(array $options)
-	{
-		$this->setAppId($options[0]);
-		$this->setApiSecret($options[1]);
-	}
-
+	
 	/**
 	 * Get the session object. This will automatically look for a signed session
 	 * sent via the signed_request, Cookie or Query Parameters if needed.
