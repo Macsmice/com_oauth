@@ -53,7 +53,7 @@ class ComOauthModelFoursquares extends ComOauthModelOauths
     		"geolat" => $geolat,
     		"geolong" => $geolong 
     	);
-    	$this->fetch($this->host.'checkin.json', $api_args, OAUTH_HTTP_METHOD_POST, array("User-Agent" => "pecl/oauth"));    	
+    	$this->fetch($this->host.'checkin.json', $api_args, OAUTH_HTTP_METHOD_POST, array("User-Agent" => "pecl/oauth"));
 	}
 
 	/**
@@ -61,7 +61,7 @@ class ComOauthModelFoursquares extends ComOauthModelOauths
 	 * Return the id of the foursquare account, to store in the db
 	 * @return string the login name
 	 */
-	function getMyLogin()
+	function getMyId()
 	{
 		$this->fetch($this->host.'user.json');
 		$credentials = json_decode($this->getLastResponse());

@@ -115,7 +115,7 @@ class ComOauthModelTwitters extends ComOauthModelOauths
 	 * Return the login name, to store in the db
 	 * @return string the login name
 	 */
-	function getMyLogin()
+	function getMyId()
 	{
 		$this->fetch($this->host.'account/verify_credentials.json');
 		$credentials = json_decode($this->getLastResponse());

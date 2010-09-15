@@ -68,7 +68,7 @@ CHANGELOG
 ---------
 
 15/09/2010
-Added FourSquare and made LinkedIn & Google Contacts work with the new APIs. Now we have Twitter, LinkedIn, FourSquare, Google Contacts
+Added FourSquare and made LinkedIn, Facebook & Google Contacts work with the new APIs. Now we have Twitter, LinkedIn, FourSquare, Google Contacts, Facebook.
 
 14/09/2010
 I'm migrating the models to the new PECL OAuth extension from the previous http://github.com/abraham/twitteroauth library. Now only Twitter works.
@@ -76,3 +76,9 @@ I'm migrating the models to the new PECL OAuth extension from the previous http:
 09/09/2010
 At the moment Twitter, Google Contacts (OAuth 1.0a) and Facebook (which uses OAuth 2) are fully working, just look into their model to see how they work. 
 Tested on Nooku Framework rev. 2513
+
+TODO
+----
+
+- Create a common redirect/callback interface
+- Scope management for services such as Facebook with granular permissions (implemented as parameters array from client code)

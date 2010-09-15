@@ -12,6 +12,9 @@ $service = KFactory::get('site::com.oauth.model.sites')->slug($name)->getItem();
 $model = KFactory::get('site::com.oauth.model.'.KInflector::pluralize($name));
 $model->initialize(array($service->consumer_key, $service->consumer_secret));
 
-$app = KFactory::tmp('lib.joomla.application');
-$url = $model->getLoginUrl();
-$app->redirect($url); 
+KFactory::tmp('lib.joomla.application')->redirect(
+	$model->authorizeURL().
+	'?client_id='.$service->consumer_key.
+	'&redirect_uri=http://'.$_SERVER['HTTP_HOST'].@route('view='.$name.'&layout=callback').
+	'&scope=publish_stream'
+);

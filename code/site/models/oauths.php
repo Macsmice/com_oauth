@@ -59,53 +59,60 @@ class ComOauthModelOauths extends KModelAbstract
 	 */
 	function storeToken($service, $token)
 	{
-		$user = KFactory::get('lib.joomla.user');
-
-		if ($user->id) 
+		if ($token)
 		{
-			if (is_array($token))
+			$user = KFactory::get('lib.joomla.user');
+	
+			if ($user->id) 
 			{
-				KFactory::tmp('site::com.oauth.model.tokens')
-					->set('userid', $user->id)
-					->set('service', $service)
-					->getItem()
-					->set('userid', $user->id)
-					->set('service', $service)
-					->set('oauth_token', $token['oauth_token'])
-					->set('oauth_token_secret', $token['oauth_token_secret'])
-					->save();
+				if (is_array($token))
+				{
+					KFactory::tmp('site::com.oauth.model.tokens')
+						->set('userid', $user->id)
+						->set('service', $service)
+						->getItem()
+						->set('userid', $user->id)
+						->set('service', $service)
+						->set('oauth_token', $token['oauth_token'])
+						->set('oauth_token_secret', $token['oauth_token_secret'])
+						->save();
+				}
+				else 
+				{
+					KFactory::tmp('site::com.oauth.model.tokens')
+						->set('userid', $user->id)
+						->set('service', $service)
+						->getList()->delete();
+					KFactory::tmp('site::com.oauth.model.tokens')
+						->getItem()
+						->set('userid', $user->id)
+						->set('service', $service)
+						->set('oauth_token', $token)
+						->set('oauth_token_secret', 0)
+						->save();
+				}
 			}
-			else 
+			else
 			{
-				KFactory::tmp('site::com.oauth.model.tokens')
-					->set('userid', $user->id)
-					->set('service', $service)
-					->getList()->delete();
-				KFactory::tmp('site::com.oauth.model.tokens')
-					->getItem()
-					->set('userid', $user->id)
-					->set('service', $service)
-					->set('oauth_token', $token)
-					->set('oauth_token_secret', 0)
-					->save();
+				//TODO: Storing the token this way, the user can only have 1 enabled service. Getting a token for a second service will overwrite the previous sessions, so 
+				//I need to have the name of the service in the variable itself.
+				KRequest::set('session.service', $service);
+	
+				if (is_array($token))
+				{
+					KRequest::set('session.oauth_token', $token['oauth_token']);
+					KRequest::set('session.oauth_token_secret', $token['oauth_token_secret']);
+				}
+				else
+				{
+					KRequest::set('session.oauth_token', $token);
+					KRequest::set('session.oauth_token_secret', 0);
+				}
 			}
 		}
 		else
 		{
-			//TODO: Storing the token this way, the user can only have 1 enabled service. Getting a token for a second service will overwrite the previous sessions, so 
-			//I need to have the name of the service in the variable itself.
-			KRequest::set('session.service', $service);
-
-			if (is_array($token))
-			{
-				KRequest::set('session.oauth_token', $token['oauth_token']);
-				KRequest::set('session.oauth_token_secret', $token['oauth_token_secret']);
-			}
-			else
-			{
-				KRequest::set('session.oauth_token', $token);
-				KRequest::set('session.oauth_token_secret', 0);
-			}
+			echo 'Null token';
 		}
 	}
 	

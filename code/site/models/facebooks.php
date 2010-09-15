@@ -7,144 +7,115 @@
  * @link        http://www.beyounic.com - http://www.joocode.com
  */
 
-class ComOauthModelFacebooks extends ComOauthModelOauth2s
+class ComOauthModelFacebooks extends ComOauthModelOauths
 {
+	public $host = "https://graph.facebook.com/"; /* Set up the API root URL. */
+
+	function requestTokenURL() 
+	{ 
+		//first step of the oauth dance: retrieve the request token
+		return 'https://graph.facebook.com/oauth/request_token'; 
+	}
+	
+	function authorizeURL()    
+	{ 
+		//second step in oauth dance: user follows a link to this page to authorize your application
+		return 'https://graph.facebook.com/oauth/authorize'; 
+	}
+	
+	function authenticateURL() 
+	{ 
+		//same as /oauth/authorize, but users are automatically redirected if they've already authorized your app
+		return 'https://graph.facebook.com/oauth/authenticate'; 
+	}
+	
+	function accessTokenURL()  
+	{ 
+		//final step in oauth dance: exchange a request token for an access token
+		return 'https://graph.facebook.com/oauth/access_token'; 
+	}
+	
 	function fetchContacts()
  	{
- 		$friends = $this->api('/me/friends?fields=id,name,picture', 'GET');
+ 		$access_token = $this->getToken();
 
- 		$contacts = array();
+ 		$api_args = array(
+    		"access_token" => $access_token['oauth_token'] 
+    	);
+    	$this->fetch($this->host.'me/friends?fields=id,name,picture', $api_args);
+ 		
+		$friends = json_decode($this->getLastResponse());
 
-		foreach ( $friends['data'] as $entry)
+		$contacts = array();
+
+		foreach ( $friends->data as $entry)
 		{
 			$contact = new KObject();
-			$contact->id = $entry['id'];			
-			$contact->title = $entry['name'];
-			$contact->avatar = $entry['picture'];
+			$contact->id = $entry->id;			
+			$contact->title = $entry->name;
+			$contact->avatar = $entry->picture;
 			$contacts[] = $contact;
 		}
 
 		return $contacts;
  	}
  	
-	/**
-	 * 
-	 * Send a DM message to specified ids
-	 * @param $message string the message
-	 * @param $ids array the people you want to send the message to
-	 */
-	function sendMessage($message, $ids)
- 	{			
-		if (count($ids))
-		{	
-			foreach ($ids as $id) 
-			{
-				$res = $this->post($this->host.'direct_messages/new.json', array('user_id' => $id, 'text' => $message));
-			}			
-		}
- 	} 	
-
  	/**
  	 * 
- 	 * Sennds a message to my FB Wall
+ 	 * Sends a message to my FB Wall
  	 * @param $message string the message to post
  	 */
 	function postMessage($message)
- 	{
- 		$result =  $this->api('/me/feed', 'POST', array('message' => $message)); 
- 		var_dump($result);
- 		exit();
+ 	{ 		
+ 		$access_token = $this->getToken();
+
+ 		$api_args = array(
+    		"access_token" => $access_token['oauth_token'],
+ 			"message" => $message
+    	);
+    	$this->fetch($this->host.'me/feed', $api_args, OAUTH_HTTP_METHOD_POST, array("User-Agent" => "pecl/oauth"));	
  	}
 
-	/**
-	 * Maps aliases to Facebook domains.
-	 */
-	public $domainMap = array(
-    	'api'      => 'https://api.facebook.com/',
-    	'api_read' => 'https://api-read.facebook.com/',
-    	'graph'    => 'https://graph.facebook.com/',
-    	'www'      => 'https://www.facebook.com/',
-	);
-	
-	/**
-	 * (non-PHPdoc)
-	 * @see components/com_oauth/models/ComOauthModelOauth2s::getLoginUrl()
-	 */
-	public function getLoginUrl($params=array()) 
-	{
-		$currentUrl = $this->getCurrentUrl();
+ 	/**
+ 	 * 
+ 	 * Sends a message to a user's FB Wall
+ 	 * 
+ 	 * @todo Not working currently, still gets Exception caught! Response: {"error":{"type":"OAuthException","message":"(#210) User not visible"}}
+ 	 * 
+ 	 * @param $message string the message to post
+ 	 */
+	function postMessageToFriend($message, $friend_id)
+ 	{ 		
+ 		$access_token = $this->getToken();
 
-		return $this->getUrl('www', 'login.php', array_merge(array(
-	        'api_key'         => $this->getAppId(),
-	        'cancel_url'      => $currentUrl,
-	        'display'         => 'page',
-	        'fbconnect'       => 1,
-	        'next'            => 'http://'.$_SERVER['HTTP_HOST'].KFactory::get('site::com.oauth.view.facebook')->createRoute('option=com_oauth&view=facebook&layout=callback'),
-	        'return_session'  => 1,
-	        'session_version' => 3,
-	        'v'               => '1.0',
-			), $params)
-		);
-	}
-	
-	/**
-	 * (non-PHPdoc)
-	 * @see components/com_oauth/models/ComOauthModelOauth2s::getLogoutUrl()
-	 */
-	public function getLogoutUrl($params=array()) 
-	{
-		return $this->getUrl('www', 'logout.php', array_merge(array(
-	        'next'         => $this->getCurrentUrl(),
-	        'access_token' => $this->getAccessToken(),
-			), $params)
-		);
-	}
-	
-	/**
-	 * Get a login status URL to fetch the status from facebook.
-	 *
-	 * The parameters:
-	 * - ok_session: the URL to go to if a session is found
-	 * - no_session: the URL to go to if the user is not connected
-	 * - no_user: the URL to go to if the user is not signed into facebook
-	 *
-	 * @param Array $params provide custom parameters
-	 * @return String the URL for the logout flow
-	 */
-	public function getLoginStatusUrl($params=array()) 
-	{
-		return $this->getUrl('www', 'extern/login_status.php', array_merge(array(
-	        'api_key'         => $this->getAppId(),
-	        'no_session'      => $this->getCurrentUrl(),
-	        'no_user'         => $this->getCurrentUrl(),
-	        'ok_session'      => $this->getCurrentUrl(),
-	        'session_version' => 3,
-			), $params)
-		);
-	}
-	
-	/**
-	 * (non-PHPdoc)
-	 * @see components/com_oauth/models/ComOauthModelOauth2s::getAccessToken()
-	 */
- 	public function getAccessToken()
-	{
-		$user = KFactory::get('lib.joomla.user');
-	
-		if ($user->id)
-		{		
-			$token = KFactory::tmp('site::com.oauth.model.tokens')
-				->set('service', 'facebook')
-				->set('userid', $user->id)
-				->getList()->getData();		
-			$token = reset($token);
-			$return = $token['oauth_token'];
-		}
-		else
-		{
-			$return = KRequest::get('session.oauth_token', 'string');
-		}
-		
-		return $return;
-	}
+ 		$api_args = array(
+    		"access_token" => $access_token['oauth_token'],
+ 			"message" => $message
+    	);
+    	$this->fetch($this->host.$friend_id.'/feed', $api_args, OAUTH_HTTP_METHOD_POST, array("User-Agent" => "pecl/oauth"));	
+ 	}
+ 	
+ 	function getMyId()
+ 	{
+ 		$access_token = $this->getToken();
+
+ 		$api_args = array(
+    		"access_token" => $access_token['oauth_token'] 
+    	);
+    	$this->fetch($this->host.'me', $api_args);
+ 		
+		return json_decode($this->getLastResponse())->id;
+ 	}
+ 	
+ 	function getMyName()
+ 	{
+ 		$access_token = $this->getToken();
+
+ 		$api_args = array(
+    		"access_token" => $access_token['oauth_token'] 
+    	);
+    	$this->fetch($this->host.'me', $api_args);
+ 		
+		return json_decode($this->getLastResponse())->name;
+ 	}
 }
