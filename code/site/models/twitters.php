@@ -9,7 +9,7 @@
 
 class ComOauthModelTwitters extends ComOauthModelOauths
 {
-	public $host = "https://api.twitter.com/1/"; /* Set up the API root URL. */
+	public $host = "https://api.twitter.com/1/";
 
 	function accessTokenURL()  
 	{ 

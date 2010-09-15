@@ -11,6 +11,8 @@
  */
 class ComOauthModelGooglecontacts extends ComOauthModelOauths
 {	
+	public $host = "https://www.google.com/m8/";
+	
 	function accessTokenURL()  
  	{ 
  		return 'https://www.google.com/accounts/OAuthGetAccessToken'; 
@@ -31,9 +33,9 @@ class ComOauthModelGooglecontacts extends ComOauthModelOauths
  	 */
  	function fetchContacts()
  	{
- 		$json = $this->get('https://www.google.com/m8/feeds/contacts/default/full?max-results=100&alt=json');
-		$json_output = json_decode($json);
-	
+ 		$this->fetch($this->host.'feeds/contacts/default/full?max-results=100&alt=json');
+		$json_output = json_decode($this->getLastResponse());
+ 	
 		$contacts = array();
 		foreach ( $json_output->feed->entry as $entry)
 		{
@@ -57,17 +59,16 @@ class ComOauthModelGooglecontacts extends ComOauthModelOauths
  	
  	/**
  	 * 
- 	 * Send a message to the specified contacts
+ 	 * Send a message to the specified contacts (uses standard J! email)
  	 * @param $message the message
  	 * @param $ids array of contact ids
  	 */
- 	function sendMessage($message, $ids)
+ 	function sendMessage($message, $ids, $subject)
  	{			
 		if (count($ids))
 		{	
 			foreach ($ids as $email) 
 			{
-				$subject = 'Ohanah invite';
 				$from = KRequest::get('post.from', 'string');
 				$config = JFactory::getConfig();
 				$mailfrom = $config->getValue('mailfrom');
