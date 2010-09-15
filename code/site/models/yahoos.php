@@ -25,4 +25,13 @@ class ComOauthModelYahoos extends ComOauthModelOauths
  	{ 
  		return 'https://api.login.yahoo.com/oauth/v2/get_request_token'; 
  	}
+ 	
+	/**
+ 	 * 
+ 	 * Return false, can't send messages directly using API
+ 	 */
+ 	function canSendMessage()
+ 	{
+ 		return false;
+ 	}
 }

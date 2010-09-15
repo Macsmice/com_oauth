@@ -78,4 +78,13 @@ class ComOauthModelFoursquares extends ComOauthModelOauths
 		$this->fetch($this->host.'checkins.json');
 		return json_decode($this->getLastResponse());
 	}
+ 	
+	/**
+ 	 * 
+ 	 * Return false, can't send messages directly using API
+ 	 */
+ 	function canSendMessage()
+ 	{
+ 		return false;
+ 	}
 }

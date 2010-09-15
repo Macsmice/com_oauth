@@ -126,4 +126,13 @@ class ComOauthModelLinkedins extends ComOauthModelOauths
         
     	return (string)$xml->{"first-name"}.' '.(string)$xml->{"last-name"};
 	}
+ 	
+	/**
+ 	 * 
+ 	 * Return true, can send messages directly using API
+ 	 */
+ 	function canSendMessage()
+ 	{
+ 		return true;
+ 	}
 }

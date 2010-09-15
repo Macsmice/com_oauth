@@ -56,4 +56,13 @@ class ComOauthModelGooglecontacts extends ComOauthModelOauths
 		
 		return $contacts;
  	}
+ 	
+ 	/**
+ 	 * 
+ 	 * Return false, can't send messages directly using Google Contacts API
+ 	 */
+ 	function canSendMessage()
+ 	{
+ 		return false;
+ 	}
 }

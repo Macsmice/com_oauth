@@ -118,4 +118,13 @@ class ComOauthModelFacebooks extends ComOauthModelOauths
  		
 		return json_decode($this->getLastResponse())->name;
  	}
+ 	
+	/**
+ 	 * 
+ 	 * Return false, can't send messages directly using Facebook API
+ 	 */
+ 	function canSendMessage()
+ 	{
+ 		return false;
+ 	}
 }

@@ -138,4 +138,13 @@ class ComOauthModelTwitters extends ComOauthModelOauths
 
 		return count($ids);
 	}
+
+	/**
+ 	 * 
+ 	 * Return true, can send messages directly using API
+ 	 */
+ 	function canSendMessage()
+ 	{
+ 		return true;
+ 	}
 }
