@@ -8,7 +8,7 @@
 
 class ComOauthModelTokens extends KModelTable
 {
-    public function __construct(KConfig $config) 
+    public function __construct($config) 
 	{
 		$config['table_behaviors'] = array('creatable', 'modifiable'); 
 		parent::__construct($config);
