@@ -67,6 +67,9 @@ You can add other functions in the model or in any other location, i.e. in the e
 CHANGELOG
 ---------
 
+15/09/2010
+Added FourSquare and made LinkedIn work with the new APIs. Now we have Twitter, LinkedIn, FourSquare
+
 14/09/2010
 I'm migrating the models to the new PECL OAuth extension from the previous http://github.com/abraham/twitteroauth library. Now only Twitter works.
 

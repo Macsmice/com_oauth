@@ -6,10 +6,7 @@
  * @license		GNU GPLv2 <http://www.gnu.org/licenses/old-licenses/gpl-2.0.html>
  * @link        http://www.beyounic.com - http://www.joocode.com
  */
- 
-/**
- * GMail uses OAuth 1.0
- */
+
 class ComOauthModelLinkedins extends ComOauthModelOauths
 {
 	public $host = "https://api.linkedin.com/";
@@ -23,15 +20,22 @@ class ComOauthModelLinkedins extends ComOauthModelOauths
 	{ 
 		return 'https://www.linkedin.com/uas/oauth/authorize'; 
 	}
+
+	function authenticateURL() 
+	{ 
+		return 'https://www.linkedin.com/uas/oauth/authenticate'; 
+	}
 	
  	function requestTokenURL() 
  	{ 
  		return 'https://api.linkedin.com/uas/oauth/requestToken'; 
  	}
- 	
+
  	function fetchContacts()
  	{
- 		$xmlstr = $this->get('http://api.linkedin.com/v1/people/~/connections');
+ 		$this->fetch($this->host.'v1/people/~/connections');
+		$xmlstr = $this->getLastResponse();
+ 			
 		$xml = new SimpleXMLElement($xmlstr); 	
 
 		$contacts = array();
@@ -42,16 +46,27 @@ class ComOauthModelLinkedins extends ComOauthModelOauths
 			$firstname = 'first-name';
 			$lastname = 'last-name';
 			
-			$contact->title = $entry->{$firstname} . ' ' . $entry->{$lastname};
-			$contact->id = $entry->id;
+			$contact->title = (string)$entry->{$firstname} . ' ' . (string)$entry->{$lastname};
+			$contact->id = (string)$entry->id;
 			
 			$pictureurl = 'picture-url';
-			$contact->avatar = $entry->{$pictureurl}; 
+			$contact->avatar = (string)$entry->{$pictureurl}; 
 			
 			$contacts[] = $contact;
 		}
 		
 		return $contacts;
+ 	}
+ 	
+ 	/**
+ 	 * 
+ 	 * Updates the Linkedin status with $message
+ 	 * @param $message
+ 	 */
+ 	function updateStatus($message)
+ 	{
+		$xml = '<?xml version="1.0" encoding="UTF-8"?><current-status>'.$message.'</current-status>';
+ 		$this->fetch($this->host.'v1/people/~/current-status', $xml, OAUTH_HTTP_METHOD_PUT, array("User-Agent" => "pecl/oauth"));
  	}
  	
  	/**
@@ -64,30 +79,51 @@ class ComOauthModelLinkedins extends ComOauthModelOauths
  	{			
 		if (count($ids))
 		{	
-			foreach ($ids as $email) 
+			foreach ($ids as $id) 
 			{
-								
-				$body = "<?xml version='1.0' encoding='UTF-8'?>
-					<mailbox-item>
-					  <recipients>
-					    <recipient>
-					      <person path='/people/~'/>
-					    </recipient>
-					  </recipients>
-					  <subject>Congratulations on your new position.</subject>
-					  <body>You're certainly the best person for the job!</body>
-					</mailbox-item>";
- 				$xmlstr = $this->post('http://api.linkedin.com/v1/people/~/mailbox', array('body' => $body));
- 				
-				var_dump($xmlstr); exit();
 				
+				$xml = '<?xml version="1.0" encoding="UTF-8"?>
+						<mailbox-item>
+						  <recipients>
+						    <recipient>
+						      <person path="/people/'.$id.'"/>
+						    </recipient>				
+    					  </recipients>
+						  <subject>Congratulations on your new position.</subject>
+						  <body>You\'re certainly the best person for the job!</body>
+						</mailbox-item>';
 				
+    			$this->fetch($this->host.'v1/people/~/mailbox', $xml, OAUTH_HTTP_METHOD_POST, array("User-Agent" => "pecl/oauth", 'Content-Type' => 'application/xml'));
 			}
 		}
 		$message = 'Mails sent';
-
-		
  	}
- 	
- 	
+
+	/**
+	 * 
+	 * Return the user id, to store in the db
+	 * @return string the login name
+	 */
+	function getMyId()
+	{
+		$this->fetch($this->host.'v1/people/~:(id,first-name,last-name,industry)');
+		$xmlstr = $this->getLastResponse();
+		$xml = new SimpleXMLElement($xmlstr); 	
+    
+    	return (string)$xml->id;
+	}
+	
+	/**
+	 * 
+	 * Return the user id, to store in the db
+	 * @return string the login name
+	 */
+	function getMyName()
+	{
+		$this->fetch($this->host.'v1/people/~:(first-name,last-name)');
+		$xmlstr = $this->getLastResponse();
+		$xml = new SimpleXMLElement($xmlstr); 	
+        
+    	return (string)$xml->{"first-name"}.' '.(string)$xml->{"last-name"};
+	}
 }

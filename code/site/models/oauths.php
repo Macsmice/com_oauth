@@ -188,22 +188,22 @@ class ComOauthModelOauths extends KModelAbstract
 	function redirect()
 	{
 		$app = KFactory::tmp('lib.joomla.application');
-
-		/* If HTTP response is 200 continue otherwise send to connect page to retry */
-		if (200 == $this->http_code || !$this->http_code) 
-		{
+//
+//		/* If HTTP response is 200 continue otherwise send to connect page to retry */
+//		if (200 == $this->http_code || !$this->http_code) 
+//		{
 			$url = KRequest::get('session.return_url', 'url');
 			$message = 'Authenticated';
 			$app->redirect($url, $message); 
-		} 
-		else 
-		{
-			KRequest::set('session.oauth_token', null);
-			KRequest::set('session.oauth_token_secret', null);
-
-			$url = KRequest::get('session.caller_url', 'string');
-			$message = 'Error: not 200';
-			$app->redirect($url, $message); 
-		}
+//		} 
+//		else 
+//		{
+//			KRequest::set('session.oauth_token', null);
+//			KRequest::set('session.oauth_token_secret', null);
+//
+//			$url = KRequest::get('session.caller_url', 'string');
+//			$message = 'Error: not 200';
+//			$app->redirect($url, $message); 
+//		}
 	}
 }
