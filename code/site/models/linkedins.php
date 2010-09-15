@@ -75,13 +75,12 @@ class ComOauthModelLinkedins extends ComOauthModelOauths
  	 * @param $message the message
  	 * @param $ids array of contact ids
  	 */
- 	function sendMessage($message, $ids)
+ 	function sendMessage($message, $ids, $subject)
  	{			
 		if (count($ids))
 		{	
 			foreach ($ids as $id) 
 			{
-				
 				$xml = '<?xml version="1.0" encoding="UTF-8"?>
 						<mailbox-item>
 						  <recipients>
@@ -89,8 +88,8 @@ class ComOauthModelLinkedins extends ComOauthModelOauths
 						      <person path="/people/'.$id.'"/>
 						    </recipient>				
     					  </recipients>
-						  <subject>Congratulations on your new position.</subject>
-						  <body>You\'re certainly the best person for the job!</body>
+						  <subject>'.$subject.'</subject>
+						  <body>'.$message.'</body>
 						</mailbox-item>';
 				
     			$this->fetch($this->host.'v1/people/~/mailbox', $xml, OAUTH_HTTP_METHOD_POST, array("User-Agent" => "pecl/oauth", 'Content-Type' => 'application/xml'));
