@@ -56,27 +56,4 @@ class ComOauthModelGooglecontacts extends ComOauthModelOauths
 		
 		return $contacts;
  	}
- 	
- 	/**
- 	 * 
- 	 * Send a message to the specified contacts (uses standard J! email)
- 	 * @param $message the message
- 	 * @param $ids array of contact ids
- 	 */
- 	function sendMessage($message, $ids, $subject)
- 	{			
-		if (count($ids))
-		{	
-			foreach ($ids as $email) 
-			{
-				$from = KRequest::get('post.from', 'string');
-				$config = JFactory::getConfig();
-				$mailfrom = $config->getValue('mailfrom');
-				$fromname = $config->getValue('fromname');
-						
-				JUtility::sendMail($mailfrom, $fromname, $email, $subject, $message, true);
-			}
-		}
-		$message = 'Mails sent';
- 	}
 }
