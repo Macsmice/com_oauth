@@ -61,7 +61,7 @@ class ComOauthModelTwitters extends ComOauthModelOauths
 			{
 				if (is_array($contactsdetails)) 
 				{
-					$twittercontacts = array_merge($twittercontacts, $$contactsdetails);	
+					$twittercontacts = array_merge($twittercontacts, $contactsdetails);	
 				}
 			}	
 		}		

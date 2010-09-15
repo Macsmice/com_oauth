@@ -7,7 +7,10 @@
  * @link        http://www.beyounic.com - http://www.joocode.com
  */
 
-/* this file is called default.php since Facebook doesn't allow parameters in the return URL */ 
+/* this file is called default.php since Facebook doesn't allow parameters in the return URL. 
+ * Also, facebook requires SEF URLs, or at least a menu pointing here so there are no params. 
+ * 
+ */ 
 
 
 $service = KRequest::get('get.view', 'string');
