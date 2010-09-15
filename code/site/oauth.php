@@ -7,4 +7,4 @@
  * @link        http://www.beyounic.com - http://www.joocode.com
  */
 
-KFactory::get('site::com.oauth.dispatcher')->dispatch(KRequest::get('get.view', 'cmd', 'twitter'));
+KFactory::get('site::com.oauth.dispatcher')->dispatch(KRequest::get('get.view', 'cmd'));
