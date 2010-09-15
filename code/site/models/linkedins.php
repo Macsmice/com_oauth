@@ -89,7 +89,7 @@ class ComOauthModelLinkedins extends ComOauthModelOauths
 						    </recipient>				
     					  </recipients>
 						  <subject>'.$subject.'</subject>
-						  <body>'.$message.'</body>
+						  <body>'.strip_tags($message).'</body>
 						</mailbox-item>';
 				
     			$this->fetch($this->host.'v1/people/~/mailbox', $xml, OAUTH_HTTP_METHOD_POST, array("User-Agent" => "pecl/oauth", 'Content-Type' => 'application/xml'));
