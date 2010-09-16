@@ -72,6 +72,8 @@ class ComOauthModelOauths extends KModelAbstract
 					KFactory::tmp('site::com.oauth.model.tokens')
 						->set('userid', $user->id)
 						->set('service', $service)
+						->getList()->delete();
+					KFactory::tmp('site::com.oauth.model.tokens')
 						->getItem()
 						->set('userid', $user->id)
 						->set('service', $service)
