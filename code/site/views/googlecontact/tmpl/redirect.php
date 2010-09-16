@@ -13,8 +13,15 @@ $name = KRequest::get('get.view', 'string');
 $service = KFactory::get('site::com.oauth.model.sites')->slug($name)->getItem();
 $model = KFactory::get('site::com.oauth.model.'.KInflector::pluralize($name));
 $model->initialize(array($service->consumer_key, $service->consumer_secret));
- 
-$request_token = $model->getRequestToken($model->requestTokenURL().'?scope='.SCOPE, 'http://'.$_SERVER['HTTP_HOST'].@route('view='.$name.'&layout=callback'));  
-KRequest::set('session.request_token', $request_token['oauth_token']);
-KRequest::set('session.request_token_secret', $request_token['oauth_token_secret']);
-KFactory::tmp('lib.joomla.application')->redirect($model->authorizeURL().'?oauth_token='.$request_token['oauth_token']);
+
+if (!$service->name)
+{
+	echo 'Service not enabled';
+}
+else
+{
+	$request_token = $model->getRequestToken($model->requestTokenURL().'?scope='.SCOPE, 'http://'.$_SERVER['HTTP_HOST'].@route('view='.$name.'&layout=callback'));  
+	KRequest::set('session.request_token', $request_token['oauth_token']);
+	KRequest::set('session.request_token_secret', $request_token['oauth_token_secret']);
+	KFactory::tmp('lib.joomla.application')->redirect($model->authorizeURL().'?oauth_token='.$request_token['oauth_token']);
+}

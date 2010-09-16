@@ -65,7 +65,7 @@ class ComOauthModelFoursquares extends ComOauthModelOauths
 	{
 		$this->fetch($this->host.'user.json');
 		$credentials = json_decode($this->getLastResponse());
-
+var_dump($credentials);exit();
 		return $credentials->user->id;
 	}
 	

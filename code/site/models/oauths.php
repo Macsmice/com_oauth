@@ -21,6 +21,7 @@ class ComOauthModelOauths extends KModelAbstract
 		try
 		{
 			$this->oauthc = new OAuth($options[0], $options[1], OAUTH_SIG_METHOD_HMACSHA1, OAUTH_AUTH_TYPE_URI);
+			
 			$token = $this->getToken();
 			$this->setToken($token['oauth_token'], $token['oauth_token_secret']);
 		}
