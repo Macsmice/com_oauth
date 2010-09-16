@@ -114,7 +114,7 @@ class ComOauthModelLinkedins extends ComOauthModelOauths
 	
 	/**
 	 * 
-	 * Return the user id, to store in the db
+	 * Return the user name, to store in the db
 	 * @return string the login name
 	 */
 	function getMyName()

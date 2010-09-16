@@ -60,6 +60,7 @@ class ComOauthModelOauths extends KModelAbstract
 	function storeToken($token)
 	{
 		$service = KInflector::singularize($this->getIdentifier()->name);
+		$this->setToken(is_array($token) ? $token['oauth_token'] : $token, is_array($token) ? $token['oauth_token_secret'] : 0);
 		
 		if ($token)
 		{
@@ -77,6 +78,9 @@ class ComOauthModelOauths extends KModelAbstract
 					->set('service', $service)
 					->set('oauth_token', is_array($token) ? $token['oauth_token'] : $token)
 					->set('oauth_token_secret', is_array($token) ? $token['oauth_token_secret'] : 0)
+					->set('service_login', $this->getMyName())
+					->set('service_id', $this->getMyId())
+					->set('service_avatar', $this->getMyAvatar())
 					->save();
 			}
 			else
@@ -191,4 +195,10 @@ class ComOauthModelOauths extends KModelAbstract
 //			$app->redirect($url, $message); 
 //		}
 	}
+	
+	/* Default methods each specialized model will override */
+	
+	function getMyAvatar() {}
+	function getMyId() {}
+	function getMyName() {}
 }
