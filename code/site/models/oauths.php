@@ -57,8 +57,10 @@ class ComOauthModelOauths extends KModelAbstract
 	 * @param string $service
 	 * @param raw $accessToken
 	 */
-	function storeToken($service, $token)
+	function storeToken($token)
 	{
+		$service = KInflector::singularize($this->getIdentifier()->name);
+		
 		if ($token)
 		{
 			$user = KFactory::get('lib.joomla.user');

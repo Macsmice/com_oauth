@@ -22,6 +22,6 @@ else
 	$model = KFactory::get('site::com.oauth.model.'.$service.'s');
 	$model->initialize(array($site->consumer_key, $site->consumer_secret));
 	$model->setToken(KRequest::get('get.oauth_token', 'raw'), KRequest::get('session.request_token_secret', 'raw'));
- 	$model->storeToken($service, $model->getAccessToken());   
+ 	$model->storeToken($model->getAccessToken());   
 	$model->redirect();
 }

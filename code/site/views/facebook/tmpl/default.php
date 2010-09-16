@@ -32,7 +32,7 @@ else
 	parse_str($model->getLastResponse());
 	
  	$model->setToken($access_token, 0);   
- 	$model->storeToken($service, $access_token);   
+ 	$model->storeToken($access_token);   
  	
  	$model->redirect();
 }
