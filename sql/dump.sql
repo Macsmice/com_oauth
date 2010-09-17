@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS `jos_oauth_tokens` (
   `oauth_token_secret` varchar(100) NOT NULL,
   `userid` int(11) NOT NULL,
   `service` varchar(50) NOT NULL,
-  `service_login` varchar(50) NOT NULL,
+  `service_username` varchar(50) NOT NULL,
   `service_id` varchar(50) NOT NULL,
   `service_avatar` varchar(350) NOT NULL,
   `created_by` int(11) unsigned NOT NULL,
@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS `jos_oauth_tokens` (
   `modified_by` int(11) unsigned NOT NULL,
   `modified_on` datetime NOT NULL,
   PRIMARY KEY (`token_id`),
-  UNIQUE KEY `userid` (`userid`,`service`)
+  UNIQUE KEY `userid` (`userid`,`service`,`service_username`,`service_id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
 
 INSERT INTO `jos_oauth_sites` (`site_id`, `title`, `slug`, `consumer_key`, `consumer_secret`, `created_by`, `created_on`, `modified_by`, `modified_on`, `enabled`) VALUES

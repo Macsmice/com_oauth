@@ -14,7 +14,7 @@ $service = KFactory::get('site::com.oauth.model.sites')->slug($name)->getItem();
 $model = KFactory::get('site::com.oauth.model.'.KInflector::pluralize($name));
 $model->initialize(array($service->consumer_key, $service->consumer_secret));
 
-if (!$service->name)
+if (!$service->title)
 {
 	echo 'Service not enabled';
 }

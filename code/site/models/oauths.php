@@ -69,9 +69,14 @@ class ComOauthModelOauths extends KModelAbstract
 	
 			if ($user->id) 
 			{
+				$myName = $this->getMyName();
+				$myId = $this->getMyId();
+				
 				KFactory::tmp('site::com.oauth.model.tokens')
 					->set('userid', $user->id)
 					->set('service', $service)
+					->set('service_username', $myName)
+					->set('service_id', $myId)
 					->getList()->delete();
 				KFactory::tmp('site::com.oauth.model.tokens')
 					->getItem()
@@ -79,14 +84,14 @@ class ComOauthModelOauths extends KModelAbstract
 					->set('service', $service)
 					->set('oauth_token', is_array($token) ? $token['oauth_token'] : $token)
 					->set('oauth_token_secret', is_array($token) ? $token['oauth_token_secret'] : 0)
-					->set('service_login', $this->getMyName())
-					->set('service_id', $this->getMyId())
+					->set('service_username', $myName)
+					->set('service_id', $myId)
 					->set('service_avatar', $this->getMyAvatar())
 					->save();
 			}
 			else
 			{
-				//TODO: Storing the token this way, the user can only have 1 enabled service. Getting a token for a second service will overwrite the previous sessions, so 
+				//TODO: Storing the token this way, the user can only have 1 enabled service (and 1 login per service). Getting a token for a second service will overwrite the previous sessions, so 
 				//I need to have the name of the service in the variable itself.
 				KRequest::set('session.service', $service);
 				KRequest::set('session.oauth_token', is_array($token) ? $token['oauth_token'] : $token);
