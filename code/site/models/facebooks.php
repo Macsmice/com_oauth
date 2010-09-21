@@ -94,6 +94,18 @@ class ComOauthModelFacebooks extends ComOauthModelOauths
     	);
     	$this->fetch($this->host.$friend_id.'/feed', $api_args, OAUTH_HTTP_METHOD_POST, array("User-Agent" => "pecl/oauth"));	
  	}
+
+ 	function getMyData()
+ 	{
+ 		$access_token = $this->getToken();
+
+ 		$api_args = array(
+    		"access_token" => $access_token['oauth_token'] 
+    	);
+    	$this->fetch($this->host.'me?fields=id,name,picture', $api_args);
+ 		
+		return json_decode($this->getLastResponse());
+ 	}
  	
  	function getMyId()
  	{

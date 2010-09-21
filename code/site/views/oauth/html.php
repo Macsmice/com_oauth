@@ -7,6 +7,12 @@
  * @link        http://www.beyounic.com - http://www.joocode.com
  */
 
+/**
+ * 
+ * 
+ * @todo Move application logic to the controller
+ *
+ */
 class ComOauthViewOauthHtml extends ComDefaultViewHtml 
 {
 	public function display()

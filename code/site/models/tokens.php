@@ -21,7 +21,6 @@ class ComOauthModelTokens extends KModelTable
 		 	->insert('service_id', 'raw')
 		 	->insert('service_avatar', 'raw')
 		 	->insert('oauth_token', 'raw')
-		 	->insert('oauth_token', 'raw')
 		 	->insert('oauth_token_secret', 'raw');
 	}
 	
