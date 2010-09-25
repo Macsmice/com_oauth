@@ -7,7 +7,7 @@
  * @link        http://www.beyounic.com - http://www.joocode.com
  */
 
-class ComOauthControllerToken extends KControllerView 
+class ComOauthControllerToken extends ComDefaultControllerDefault 
 {
 	public function getRedirect()
 	{
