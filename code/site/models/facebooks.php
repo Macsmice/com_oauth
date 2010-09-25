@@ -48,7 +48,7 @@ class ComOauthModelFacebooks extends ComOauthModelOauths
 
 		$contacts = array();
 
-		foreach ( $friends->data as $entry)
+		foreach ($friends->data as $entry)
 		{
 			$contact = new KObject();
 			$contact->id = $entry->id;			

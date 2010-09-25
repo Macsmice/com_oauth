@@ -27,40 +27,40 @@ USAGE
 This component must be referenced and run by another component, let's call it the 'client' component. For example I reference how this works on buzzrewarder.com.
 First, create a link to com_oauth, referencing the caller and return URL:
 
-<?
-$site->slug = 'twitter';
-$url =  'option=com_oauth&view=oauth&service='.$site->slug;
-$url .= '&caller_url='.base64_encode('index.php?option=com_campaigns&view=campaign&id='.$campaign->id);
-$url .= '&return_url='.base64_encode('index.php?option=com_campaigns&view=campaign&id='.$campaign->id.'&layout=step2&service='.$site->slug);
-?>
+  <?
+  $site->slug = 'twitter';
+  $url =  'option=com_oauth&view=oauth&service='.$site->slug;
+  $url .= '&caller_url='.base64_encode('index.php?option=com_campaigns&view=campaign&id='.$campaign->id);
+  $url .= '&return_url='.base64_encode('index.php?option=com_campaigns&view=campaign&id='.$campaign->id.'&layout=step2&service='.$site->slug);
+  ?>
 
-<a href="<?=@route($url)?>">Click here</a>
+  <a href="<?=@route($url)?>">Click here</a>
 
 com_oauth takes care of logging the user to the service and coming back, storing the token in the database if the user is logged in, or storing it in the user's session if not.
 
 After the user authorizes the application on the service, you can run the code you need on the return_url you set, i.e.
 
-<?
-$user = KFactory::get('lib.joomla.user');
-$serviceName = KRequest::get('get.service', 'string');
-$service = KFactory::get('site::com.oauth.model.sites')->slug($serviceName)->getItem();	
-$model = KFactory::get('site::com.oauth.model.'.KInflector::pluralize($serviceName));
+  <?
+  $user = KFactory::get('lib.joomla.user');
+  $serviceName = KRequest::get('get.service', 'string');
+  $service = KFactory::get('site::com.oauth.model.sites')->slug($serviceName)->getItem();	
+  $model = KFactory::get('site::com.oauth.model.'.KInflector::pluralize($serviceName));
 				
-if ($model->getToken())
-{
-	$model->initialize(array($service->consumer_key, $service->consumer_secret));
-}
-else
-{
-	$url =  'index.php';												
-	$message = "Invalid token";
-	KFactory::tmp('lib.joomla.application')->redirect($url, $message); 		
-}
+  if ($model->getToken())
+  {
+  	  $model->initialize(array($service->consumer_key, $service->consumer_secret));
+  }
+  else
+  {
+	  $url =  'index.php';												
+	  $message = "Invalid token";
+	  KFactory::tmp('lib.joomla.application')->redirect($url, $message); 		
+  }
 
-$mylogin = $model->getMyLogin();
-$numberOfFollowers = $model->countFollowers());
-$model->sendMessage('test', array('joocode'));
-?>
+  $mylogin = $model->getMyLogin();
+  $numberOfFollowers = $model->countFollowers());
+  $model->sendMessage('test', array('joocode'));
+  ?>
 
 You can add other functions in the model or in any other location, i.e. in the extension that uses com_oauth, but basically what should be best is trying to identify general purpose functions that are useful to everyone and put them in the com_oauth model so we can all use them, so feel free to fork, add what you think is right and push your modifications here :)
 

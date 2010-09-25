@@ -14,7 +14,7 @@ class ComOauthModelOauths extends KModelAbstract
 	/**
 	 * 
 	 * Initializes the model
-	 * @param $options $options[0] is oauth_token, $options[1] is oauth_token_secret
+	 * @param $options $options[0] is site key, $options[1] is site secret
 	 */
 	function initialize(array $options) 
 	{
