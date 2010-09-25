@@ -67,6 +67,9 @@ You can add other functions in the model or in any other location, i.e. in the e
 CHANGELOG
 ---------
 
+25/09/2010
+Moved flow control to the controllers. Each service now needs only a model and a controller specifying URL endpoints and OAuth version (and optionally it can specialize actions). Deleted view, now unneeded. 
+
 15/09/2010
 Added FourSquare and made LinkedIn, Facebook & Google Contacts work with the new APIs. Now we have Twitter, LinkedIn, FourSquare, Google Contacts, Facebook.
 
@@ -80,5 +83,4 @@ Tested on Nooku Framework rev. 2513
 TODO
 ----
 
-- Create a common redirect/callback interface
 - Scope management for services such as Facebook with granular permissions (implemented as parameters array from client code)
