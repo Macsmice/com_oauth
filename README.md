@@ -27,6 +27,7 @@ USAGE
 This component must be referenced and run by another component, let's call it the 'client' component. For example I reference how this works on buzzrewarder.com.
 First, create a link to com_oauth, referencing the caller and return URL:
 
+<code>
   <?
   $site->slug = 'twitter';
   $url =  'option=com_oauth&view=oauth&service='.$site->slug;
@@ -35,6 +36,7 @@ First, create a link to com_oauth, referencing the caller and return URL:
   ?>
 
   <a href="<?=@route($url)?>">Click here</a>
+</code>
 
 com_oauth takes care of logging the user to the service and coming back, storing the token in the database if the user is logged in, or storing it in the user's session if not.
 
