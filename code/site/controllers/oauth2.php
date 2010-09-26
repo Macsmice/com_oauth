@@ -30,7 +30,7 @@ class ComOauthControllerOauth2 extends ComOauthControllerOauth
 		{	
 			$model = KFactory::get('site::com.oauth.model.'.$view.'s');
 			$model->initialize(array($site->consumer_key, $site->consumer_secret));			
-			$model->fetch($model->accessTokenURL().'?client_id='.$site->consumer_key.'&redirect_uri=http://'.$_SERVER['HTTP_HOST'].@route('view='.$view.'&layout=callback').'&client_secret='.$site->consumer_secret.'&code='.KRequest::get('get.code', 'raw'));
+			$model->fetch($model->accessTokenURL().'?client_id='.$site->consumer_key.'&redirect_uri=http://'.$_SERVER['HTTP_HOST'].@route('view='.$view.'&layout=default').'&client_secret='.$site->consumer_secret.'&code='.KRequest::get('get.code', 'raw'));
 			parse_str($model->getLastResponse());
 		 	$model->setToken($access_token, 0);   
 		 	$model->storeToken($access_token);   
@@ -60,7 +60,7 @@ class ComOauthControllerOauth2 extends ComOauthControllerOauth
 			KFactory::tmp('lib.joomla.application')->redirect(
 				$model->authorizeURL().
 				'?client_id='.$service->consumer_key.
-				'&redirect_uri=http://'.$_SERVER['HTTP_HOST'].@route('view='.$view.'&layout=callback').
+				'&redirect_uri=http://'.$_SERVER['HTTP_HOST'].@route('view='.$view.'&layout=default').
 				'&scope=publish_stream'
 			);
 		}
