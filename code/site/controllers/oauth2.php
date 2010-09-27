@@ -46,7 +46,7 @@ class ComOauthControllerOauth2 extends ComOauthControllerOauth
 	 * @param string $view
 	 */
 	protected function _processRedirect($layout, $view)
-	{
+	{ 
 		$service = KFactory::get('site::com.oauth.model.sites')->slug($view)->getItem();
 		$model = KFactory::get('site::com.oauth.model.'.KInflector::pluralize($view));
 		$model->initialize(array($service->consumer_key, $service->consumer_secret));
@@ -60,7 +60,7 @@ class ComOauthControllerOauth2 extends ComOauthControllerOauth
 			KFactory::tmp('lib.joomla.application')->redirect(
 				$model->authorizeURL().
 				'?client_id='.$service->consumer_key.
-				'&redirect_uri=http://'.$_SERVER['HTTP_HOST'].@route('view='.$view.'&layout=default').
+				'&redirect_uri=http://'.$_SERVER['HTTP_HOST'].JRoute::_('index.php?option=com_oauth&view='.$view.'&layout=default').
 				'&scope=publish_stream'
 			);
 		}
