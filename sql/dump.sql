@@ -35,4 +35,5 @@ INSERT INTO `jos_oauth_sites` (`site_id`, `title`, `slug`, `consumer_key`, `cons
 (2, 'Facebook', 'facebook', 'YOUR_CONSUMER_KEY', 'YOUR_CONSUMER_SECRET', 0, '0000-00-00 00:00:00', 0, '0000-00-00 00:00:00', '0'),
 (3, 'Google Contacts', 'googlecontact', 'anonymous', 'anonymous', 0, '0000-00-00 00:00:00', 0, '0000-00-00 00:00:00', '1'),
 (4, 'LinkedIn', 'linkedin', 'YOUR_CONSUMER_KEY', 'YOUR_CONSUMER_SECRET', 0, '0000-00-00 00:00:00', 0, '0000-00-00 00:00:00', '1'),
-(5, 'Yahoo', 'yahoo', 'YOUR_CONSUMER_KEY', 'YOUR_CONSUMER_SECRET', 0, '0000-00-00 00:00:00', 0, '0000-00-00 00:00:00', '0');
+(5, 'Yahoo', 'yahoo', 'YOUR_CONSUMER_KEY', 'YOUR_CONSUMER_SECRET', 0, '0000-00-00 00:00:00', 0, '0000-00-00 00:00:00', '0'),
+(6, 'Subscrin', 'subscrin', 'YOUR_CONSUMER_KEY', 'YOUR_CONSUMER_SECRET', 0, '0000-00-00 00:00:00', 0, '0000-00-00 00:00:00', 1);

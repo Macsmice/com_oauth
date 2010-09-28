@@ -58,7 +58,7 @@ class ComOauthControllerOauth2 extends ComOauthControllerOauth
 		{
 			KFactory::tmp('lib.joomla.application')->redirect(
 				$model->authorizeURL().
-				(strpbrk($model->accessTokenURL(), '&') ? '&' : '?').
+				(strpbrk($model->authorizeURL(), '&') ? '&' : '?').
 				'client_id='.$service->consumer_key.
 				'&redirect_uri='.urlencode('http://'.$_SERVER['HTTP_HOST'].JRoute::_('index.php?option=com_oauth&view='.$view)).
 				'&scope=publish_stream'
