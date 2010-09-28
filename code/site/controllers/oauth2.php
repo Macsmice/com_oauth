@@ -29,14 +29,13 @@ class ComOauthControllerOauth2 extends ComOauthControllerOauth
 		else 
 		{	
 			$model = KFactory::get('site::com.oauth.model.'.$view.'s');
-			$model->initialize(array($site->consumer_key, $site->consumer_secret));			
-			$model->fetch($model->accessTokenURL().'?client_id='.$site->consumer_key.'&redirect_uri=http://'.$_SERVER['HTTP_HOST'].@route('view='.$view.'&layout=default').'&client_secret='.$site->consumer_secret.'&code='.KRequest::get('get.code', 'raw'));
+			$model->initialize(array($site->consumer_key, $site->consumer_secret));						
+			$model->fetch($model->accessTokenURL().(strpbrk($model->accessTokenURL(), '?') ? '&' : '?').'client_id='.$site->consumer_key.'&redirect_uri='.urlencode('http://'.$_SERVER['HTTP_HOST'].JRoute::_('index.php?option=com_oauth&view='.$view.'&layout=default').'&client_secret='.$site->consumer_secret.'&code='.KRequest::get('get.code', 'raw')));
 			parse_str($model->getLastResponse());
 		 	$model->setToken($access_token, 0);   
-		 	$model->storeToken($access_token);   
+		 	$model->storeToken($access_token);
 		 	$model->redirect();
 		}
-
 	}
 		
 	/**
@@ -59,8 +58,9 @@ class ComOauthControllerOauth2 extends ComOauthControllerOauth
 		{
 			KFactory::tmp('lib.joomla.application')->redirect(
 				$model->authorizeURL().
-				'?client_id='.$service->consumer_key.
-				'&redirect_uri=http://'.$_SERVER['HTTP_HOST'].JRoute::_('index.php?option=com_oauth&view='.$view.'&layout=default').
+				(strpbrk($model->accessTokenURL(), '&') ? '&' : '?').
+				'client_id='.$service->consumer_key.
+				'&redirect_uri='.urlencode('http://'.$_SERVER['HTTP_HOST'].JRoute::_('index.php?option=com_oauth&view='.$view)).
 				'&scope=publish_stream'
 			);
 		}

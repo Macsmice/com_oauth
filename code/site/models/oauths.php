@@ -123,7 +123,7 @@ class ComOauthModelOauths extends KModelAbstract
 			$token = KFactory::tmp('site::com.oauth.model.tokens')
 				->set('service', KInflector::singularize($this->getIdentifier()->name))
 				->set('userid', $user->id)
-				->getList()->getData();		
+				->getList()->getData();
 			$token = reset($token);
 			
 			if ($token)

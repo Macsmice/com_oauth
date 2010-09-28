@@ -63,11 +63,11 @@ class ComOauthControllerOauth extends ComDefaultControllerDefault
 		}
 		else
 		{
-			if ($layout == 'redirect' || $layout == '')
+			if ($layout == 'redirect')
 			{
 				$this->_processRedirect($layout, $view);
 			}
-			elseif ($layout == 'default')
+			elseif ($layout == 'default' || $layout == '')
 			{
 				$this->_processDefault($layout, $view);
 			}
@@ -126,7 +126,7 @@ class ComOauthControllerOauth extends ComDefaultControllerDefault
 			$request_token = $model->getRequestToken($model->requestTokenURL(), 'http://'.$_SERVER['HTTP_HOST'].JRoute::_('index.php?option=com_oauth&view='.$view.'&layout=default'));  
 			KRequest::set('session.request_token', $request_token['oauth_token']);
 			KRequest::set('session.request_token_secret', $request_token['oauth_token_secret']);
-			KFactory::tmp('lib.joomla.application')->redirect($model->authorizeURL().'?oauth_token='.$request_token['oauth_token']);
+			KFactory::tmp('lib.joomla.application')->redirect($model->authorizeURL().(strpbrk($model->authorizeURL(), '?') ? '&' : '?').'oauth_token='.$request_token['oauth_token']);
 		}
 	}
 }
