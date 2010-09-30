@@ -104,7 +104,6 @@ class ComOauthModelOauths extends KModelAbstract
 		}
 	}
 	
-
 	/**
 	 * 
 	 * Return the current token for the given service
