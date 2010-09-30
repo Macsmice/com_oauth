@@ -20,6 +20,15 @@ Simply download the package and symlink from the Joomla installation
 	`ln -s com_oauth_directory/admin com_oauth`
 ####/components:####
 	`ln -s com_oauth_directory/site com_oauth`
+	
+And add service components, such as
+
+http://github.com/beyounic/com_googlecontact
+http://github.com/beyounic/com_linkedin
+http://github.com/beyounic/com_twitter
+http://github.com/beyounic/com_facebook
+
+or write your own.
  
 USAGE
 -----
@@ -44,7 +53,7 @@ After the user authorizes the application on the service, you can run the code y
 	$user = KFactory::get('lib.joomla.user');
 	$serviceName = KRequest::get('get.service', 'string');
 	$service = KFactory::get('site::com.oauth.model.sites')->slug($serviceName)->getItem();	
-	$model = KFactory::get('site::com.oauth.model.'.KInflector::pluralize($serviceName));
+	$model = KFactory::get('site::com.'.$serviceName.'.model.apis');
 				
 	if ($model->getToken())
 	{
@@ -66,6 +75,9 @@ You can add other functions in the model or in any other location, i.e. in the e
 
 CHANGELOG
 ---------
+
+30/09/2010
+Extracted specialized service components. Each service will have its own component. See http://github.com/beyounic/com_facebook as an example. The com_oauth core serves as a framework.
 
 25/09/2010
 Moved flow control to the controllers. Each service now needs only a model and a controller specifying URL endpoints and OAuth version (and optionally it can specialize actions). Deleted view, now unneeded. 
