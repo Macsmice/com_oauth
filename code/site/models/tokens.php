@@ -16,6 +16,7 @@ class ComOauthModelTokens extends KModelTable
 		// Set the state
 		$this->getState()
 		 	->insert('userid', 'int')
+		 	->insert('created_by', 'int')
 		 	->insert('service', 'string')
 		 	->insert('service_login', 'raw')
 		 	->insert('service_id', 'raw')
@@ -63,6 +64,11 @@ class ComOauthModelTokens extends KModelTable
 		if ($state->userid)
 		{
 			$query->where('userid', '=', $state->userid);
+		}
+		
+		if ($state->created_by)
+		{
+			$query->where('created_by', '=', $state->created_by);
 		}
 	}
 }

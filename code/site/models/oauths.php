@@ -20,8 +20,7 @@ class ComOauthModelOauths extends KModelAbstract
 	{
 		try
 		{
-			$this->oauthc = new OAuth($options[0], $options[1], OAUTH_SIG_METHOD_HMACSHA1, OAUTH_AUTH_TYPE_URI);
-			
+			$this->oauthc = new OAuth($options[0], $options[1], OAUTH_SIG_METHOD_HMACSHA1, OAUTH_AUTH_TYPE_URI);			
 			$token = $this->getToken();
 			$this->setToken($token['oauth_token'], $token['oauth_token_secret']);
 		}
@@ -60,7 +59,7 @@ class ComOauthModelOauths extends KModelAbstract
 	 */
 	function storeToken($token)
 	{
-		$service = KInflector::singularize($this->getIdentifier()->name);
+		$service = KInflector::singularize($this->getIdentifier()->package);
 		$this->setToken(is_array($token) ? $token['oauth_token'] : $token, is_array($token) ? $token['oauth_token_secret'] : 0);
 		
 		if ($token)
@@ -110,7 +109,7 @@ class ComOauthModelOauths extends KModelAbstract
 	 * @param serviceName string the service slug
 	 */
 	function getToken()
-	{			
+	{
 		$user = KFactory::get('lib.joomla.user');
 		$service = KFactory::tmp('site::com.oauth.model.sites')->set('slug', KInflector::singularize($this->getIdentifier()->name))->getItem();	
 		
@@ -120,7 +119,7 @@ class ComOauthModelOauths extends KModelAbstract
 		if ($user->id)
 		{
 			$token = KFactory::tmp('site::com.oauth.model.tokens')
-				->set('service', KInflector::singularize($this->getIdentifier()->name))
+				->set('service', KInflector::singularize($this->getIdentifier()->package))
 				->set('userid', $user->id)
 				->getList()->getData();
 			$token = reset($token);

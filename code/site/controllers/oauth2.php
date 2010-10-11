@@ -28,9 +28,9 @@ class ComOauthControllerOauth2 extends ComOauthControllerOauth
 		}
 		else 
 		{	
-			$model = KFactory::get('site::com.oauth.model.'.$view.'s');
+			$model = KFactory::get('site::com.'.$view.'.model.apis');
 			$model->initialize(array($site->consumer_key, $site->consumer_secret));						
-			$model->fetch($model->accessTokenURL().(strpbrk($model->accessTokenURL(), '?') ? '&' : '?').'client_id='.$site->consumer_key.'&redirect_uri='.urlencode('http://'.$_SERVER['HTTP_HOST'].JRoute::_('index.php?option=com_oauth&view='.$view.'&layout=default').'&client_secret='.$site->consumer_secret.'&code='.KRequest::get('get.code', 'raw')));
+			$model->fetch($model->accessTokenURL().(strpbrk($model->accessTokenURL(), '?') ? '&' : '?').'client_id='.$site->consumer_key.'&client_secret='.$site->consumer_secret.'&code='.KRequest::get('get.code', 'raw').'&redirect_uri='.urlencode('http://'.$_SERVER['HTTP_HOST'].JRoute::_('index.php?option=com_oauth&view='.$view.'&layout=default')));
 			parse_str($model->getLastResponse());
 		 	$model->setToken($access_token, 0);   
 		 	$model->storeToken($access_token);
@@ -45,9 +45,9 @@ class ComOauthControllerOauth2 extends ComOauthControllerOauth
 	 * @param string $view
 	 */
 	protected function _processRedirect($layout, $view)
-	{ 
+	{
 		$service = KFactory::get('site::com.oauth.model.sites')->slug($view)->getItem();
-		$model = KFactory::get('site::com.oauth.model.'.KInflector::pluralize($view));
+		$model = KFactory::get('site::com.'.$view.'.model.apis');
 		$model->initialize(array($service->consumer_key, $service->consumer_secret));
 		
 		if (!$service->title)
@@ -60,9 +60,10 @@ class ComOauthControllerOauth2 extends ComOauthControllerOauth
 				$model->authorizeURL().
 				(strpbrk($model->authorizeURL(), '&') ? '&' : '?').
 				'client_id='.$service->consumer_key.
-				'&redirect_uri='.urlencode('http://'.$_SERVER['HTTP_HOST'].JRoute::_('index.php?option=com_oauth&view='.$view)).
+				'&redirect_uri='.urlencode('http://'.$_SERVER['HTTP_HOST'].JRoute::_('index.php?option=com_oauth&view=oauth&service='.$view.'&layout=default')).
 				'&scope=publish_stream'
 			);
+			
 		}
 	}
 }
