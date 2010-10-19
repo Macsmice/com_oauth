@@ -66,12 +66,10 @@ class ComOauthControllerOauth extends ComDefaultControllerDefault
 			if ($layout == 'redirect')
 			{
 				KFactory::get('site::com.'.$service.'.controller.api')->_processRedirect($layout, $service);
-				//$this->_processRedirect($layout, $service);
 			}
 			elseif ($layout == 'default' || $layout == '')
 			{
 				KFactory::get('site::com.'.$service.'.controller.api')->_processDefault($layout, $service);
-				//$this->_processDefault($layout, $service);
 			}
 		}
 			
@@ -87,7 +85,7 @@ class ComOauthControllerOauth extends ComDefaultControllerDefault
 	protected function _processDefault($layout, $view)
 	{
 		$site = KFactory::get('site::com.oauth.model.sites')->slug($view)->getItem();
-		
+
 		if (KRequest::get('session.request_token', 'raw') !== KRequest::get('request.oauth_token', 'raw')) 
 		{	
 			$app = KFactory::tmp('lib.joomla.application');
