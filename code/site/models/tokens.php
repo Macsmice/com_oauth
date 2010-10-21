@@ -18,7 +18,7 @@ class ComOauthModelTokens extends KModelTable
 		 	->insert('userid', 'int')
 		 	->insert('created_by', 'int')
 		 	->insert('service', 'string')
-		 	->insert('service_login', 'raw')
+		 	->insert('service_username', 'raw')
 		 	->insert('service_id', 'raw')
 		 	->insert('service_avatar', 'raw')
 		 	->insert('oauth_token', 'raw')
@@ -46,9 +46,9 @@ class ComOauthModelTokens extends KModelTable
 			$query->where('oauth_token_secret', '=', $state->oauth_token_secret);
 		}	
 		
-		if ($state->service_login)
+		if ($state->service_username)
 		{
-			$query->where('service_login', '=', $state->service_login);
+			$query->where('service_username', '=', $state->service_username);
 		}	
 		
 		if ($state->service_id)

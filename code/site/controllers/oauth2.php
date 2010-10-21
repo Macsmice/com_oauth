@@ -63,7 +63,6 @@ class ComOauthControllerOauth2 extends ComOauthControllerOauth
 				'&redirect_uri='.urlencode('http://'.$_SERVER['HTTP_HOST'].JRoute::_('index.php?option=com_oauth&view=oauth&service='.$view.'&layout=default')).
 				'&scope=publish_stream'
 			);
-			
 		}
 	}
 }

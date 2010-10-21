@@ -76,15 +76,9 @@ class ComOauthModelOauths extends KModelAbstract
 					->set('service', $service)
 					->set('service_username', $myName)
 					->set('service_id', $myId)
-					->getList()->delete();
-				KFactory::tmp('site::com.oauth.model.tokens')
 					->getItem()
-					->set('userid', $user->id)
-					->set('service', $service)
 					->set('oauth_token', is_array($token) ? $token['oauth_token'] : $token)
 					->set('oauth_token_secret', is_array($token) ? $token['oauth_token_secret'] : 0)
-					->set('service_username', $myName)
-					->set('service_id', $myId)
 					->set('service_avatar', $this->getMyAvatar())
 					->save();
 			}
@@ -205,4 +199,5 @@ class ComOauthModelOauths extends KModelAbstract
 	function getMyAvatar() {}
 	function getMyId() {}
 	function getMyName() {}
+	function canPostStories() {}
 }
