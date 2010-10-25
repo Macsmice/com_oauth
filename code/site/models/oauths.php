@@ -80,6 +80,10 @@ class ComOauthModelOauths extends KModelAbstract
 					->set('oauth_token', is_array($token) ? $token['oauth_token'] : $token)
 					->set('oauth_token_secret', is_array($token) ? $token['oauth_token_secret'] : 0)
 					->set('service_avatar', $this->getMyAvatar())
+					->set('userid', $user->id)
+					->set('service', $service)
+					->set('service_username', $myName)
+					->set('service_id', $myId)
 					->save();
 			}
 			else
