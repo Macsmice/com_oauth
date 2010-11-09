@@ -122,7 +122,7 @@ class ComOauthControllerOauth extends ComDefaultControllerDefault
 		else
 		{
 			/* Get temporary credentials. */
-			$request_token = $model->getRequestToken($model->requestTokenURL(), 'http://'.$_SERVER['HTTP_HOST'].JRoute::_('index.php?option=com_oauth&view=oauth&service='.$service.'&layout=default'));  
+			$request_token = $model->getRequestToken($model->requestTokenURL(), 'http://'.$_SERVER['HTTP_HOST'].JRoute::_('index.php?option=com_oauth&view=oauth&service='.$service.'&layout=default'));
 			KRequest::set('session.request_token', $request_token['oauth_token']);
 			KRequest::set('session.request_token_secret', $request_token['oauth_token_secret']);
 			KFactory::tmp('lib.joomla.application')->redirect($model->authorizeURL().(strpbrk($model->authorizeURL(), '?') ? '&' : '?').'oauth_token='.$request_token['oauth_token']);
