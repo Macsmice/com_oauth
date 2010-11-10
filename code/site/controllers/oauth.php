@@ -9,7 +9,7 @@
 
 class ComOauthControllerOauth extends ComDefaultControllerDefault 
 {	
-	protected function _actionRead()
+	protected function _actionRead(KCommandContext $context)
 	{
 		$layout = KRequest::get('get.layout', 'string');
 		$view = KRequest::get('get.view', 'string');
@@ -73,7 +73,7 @@ class ComOauthControllerOauth extends ComDefaultControllerDefault
 			}
 		}
 			
-		return parent::_actionRead();
+		return parent::_actionRead($context);
 	}
 	
 	/**
