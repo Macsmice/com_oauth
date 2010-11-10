@@ -29,13 +29,13 @@ class ComOauthControllerOauth2 extends ComOauthControllerOauth
 		else 
 		{	
 			$model = KFactory::get('site::com.'.$view.'.model.apis');
-			$model->initialize(array($site->consumer_key, $site->consumer_secret));						
+			$model->initialize(array($site->consumer_key, $site->consumer_secret));
 			$model->fetch($model->accessTokenURL().(strpbrk($model->accessTokenURL(), '?') ? '&' : '?').'client_id='.$site->consumer_key.'&client_secret='.$site->consumer_secret.'&code='.KRequest::get('get.code', 'raw').'&redirect_uri='.urlencode('http://'.$_SERVER['HTTP_HOST'].JRoute::_('index.php?option=com_oauth&view='.$view.'&layout=default')));
 			parse_str($model->getLastResponse());
 		 	$model->setToken($access_token, 0);
 			
 		 	KRequest::set('session.service', $view);
-
+			
 		 	$model->storeToken($access_token);
 		 	$model->redirect();
 		}
