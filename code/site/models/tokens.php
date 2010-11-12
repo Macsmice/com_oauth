@@ -15,7 +15,6 @@ class ComOauthModelTokens extends KModelTable
 		
 		// Set the state
 		$this->getState()
-			->insert('oauth_token_id', 'int')
 		 	->insert('userid', 'int')
 		 	->insert('created_by', 'int')
 		 	->insert('service', 'string')
@@ -36,11 +35,6 @@ class ComOauthModelTokens extends KModelTable
 		{
 			$query->where('service', '=', $state->service);
 		}
-		
-		if ($state->oauth_token_id)
-		{
-			$query->where('oauth_token_id', '=', $state->oauth_token_id);
-		}	
 		
 		if ($state->oauth_token)
 		{
