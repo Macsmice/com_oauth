@@ -30,7 +30,13 @@ class ComOauthControllerOauth2 extends ComOauthControllerOauth
 		{	
 			$model = KFactory::get('site::com.'.$view.'.model.apis');
 			$model->initialize(array($site->consumer_key, $site->consumer_secret));
-			$model->fetch($model->accessTokenURL().(strpbrk($model->accessTokenURL(), '?') ? '&' : '?').'client_id='.$site->consumer_key.'&client_secret='.$site->consumer_secret.'&code='.KRequest::get('get.code', 'raw').'&redirect_uri='.urlencode('http://localhost/ohanahGZ/facebook-connect'));
+			$model->fetch(
+				$model->accessTokenURL().
+				(strpbrk($model->accessTokenURL(), '?') ? '&' : '?').
+				'client_id='.$site->consumer_key.
+				'&client_secret='.$site->consumer_secret.
+				'&code='.KRequest::get('get.code', 'raw').
+				'&redirect_uri='.urlencode('http://'.$_SERVER['HTTP_HOST'].KRequest::base().'/facebook-connect'));
 
 			parse_str($model->getLastResponse());
 		 	$model->setToken($access_token, 0);
@@ -64,7 +70,7 @@ class ComOauthControllerOauth2 extends ComOauthControllerOauth
 				$model->authorizeURL().
 				(strpbrk($model->authorizeURL(), '&') ? '&' : '?').
 				'client_id='.$service->consumer_key.
-				'&redirect_uri='.urlencode('http://localhost/ohanahGZ/facebook-connect').
+				'&redirect_uri='.urlencode('http://'.$_SERVER['HTTP_HOST'].KRequest::base().'/facebook-connect').
 				'&scope=publish_stream,user_about_me'
 			);
 		}
