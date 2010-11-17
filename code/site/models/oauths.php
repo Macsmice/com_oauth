@@ -30,7 +30,17 @@ class ComOauthModelOauths extends KModelAbstract
 		    echo "Response: ". $e->lastResponse . "\n";
 		}
 	}
-		
+
+	/**
+	 * 
+	 * Get the redirect uri. Can be overridden (see Facebook)
+	 */
+	function getRedirectUri()
+	{
+		$service = KInflector::singularize($this->getIdentifier()->package);
+		return 'http://'.$_SERVER['HTTP_HOST'].JRoute::_('index.php?option=com_oauth&view=oauth&service='.$service.'&layout=default');
+	}
+	
 	/**
 	 * 
 	 * Get the request token
