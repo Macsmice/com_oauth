@@ -40,11 +40,8 @@ class ComOauthControllerOauth2 extends ComOauthControllerOauth
 
 			parse_str($model->getLastResponse());
 		 	$model->setToken($access_token, 0);
-			
 		 	KRequest::set('session.service', $view);
-			
-		 	$model->storeToken($access_token);
-		 	$model->redirect();
+		 	$model->redirect($model->storeToken($access_token));
 		}
 	}
 		

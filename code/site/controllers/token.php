@@ -9,6 +9,12 @@
 
 class ComOauthControllerToken extends ComDefaultControllerDefault 
 {
+	public function _actionSave(KCommandContext $context)
+	{
+		var_dump(KConfig::toData($context->data)); exit();
+		parent::_actionAdd($context);
+	}
+	
 	public function getRedirect()
 	{
 		$action = KRequest::get('post.action', 'string');

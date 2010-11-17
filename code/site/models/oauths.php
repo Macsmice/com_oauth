@@ -81,20 +81,28 @@ class ComOauthModelOauths extends KModelAbstract
 				$myName = $this->getMyName();
 				$myId = $this->getMyId();
 				
-				KFactory::tmp('site::com.oauth.model.tokens')
-					->set('userid', $user->id)
-					->set('service', $service)
-					->set('service_username', $myName)
-					->set('service_id', $myId)
-					->getItem()
-					->set('oauth_token', is_array($token) ? $token['oauth_token'] : $token)
-					->set('oauth_token_secret', is_array($token) ? $token['oauth_token_secret'] : 0)
-					->set('service_avatar', $this->getMyAvatar())
-					->set('userid', $user->id)
-					->set('service', $service)
-					->set('service_username', $myName)
-					->set('service_id', $myId)
-					->save();
+				if (!KFactory::tmp('site::com.oauth.model.tokens')->set('service', $service)->set('service_id', $myId)->getTotal())
+				{
+					KFactory::tmp('site::com.oauth.model.tokens')
+						->set('userid', $user->id)
+						->set('service', $service)
+						->set('service_username', $myName)
+						->set('service_id', $myId)
+						->getItem()
+						->set('oauth_token', is_array($token) ? $token['oauth_token'] : $token)
+						->set('oauth_token_secret', is_array($token) ? $token['oauth_token_secret'] : 0)
+						->set('service_avatar', $this->getMyAvatar())
+						->set('userid', $user->id)
+						->set('service', $service)
+						->set('service_username', $myName)
+						->set('service_id', $myId)
+						->save();
+					return true;
+				}
+				else 
+				{
+					return 'Error: a person already registered on site using this token';
+				}
 			}
 			else
 			{
@@ -186,7 +194,7 @@ class ComOauthModelOauths extends KModelAbstract
 	 * 
 	 * Redirect to the workflow after the token has been stored
 	 */
-	function redirect()
+	function redirect($message = 'Authenticated')
 	{
 		$app = KFactory::tmp('lib.joomla.application');
 //
@@ -194,7 +202,6 @@ class ComOauthModelOauths extends KModelAbstract
 //		if (200 == $this->http_code || !$this->http_code) 
 //		{
 			$url = KRequest::get('session.return_url', 'url');
-			$message = 'Authenticated';
 			$app->redirect($url, $message); 
 //		} 
 //		else 
@@ -206,7 +213,7 @@ class ComOauthModelOauths extends KModelAbstract
 //			$message = 'Error: not 200';
 //			$app->redirect($url, $message); 
 //		}
-	}
+	}	
 	
 	/* Default methods each specialized model will override */
 	

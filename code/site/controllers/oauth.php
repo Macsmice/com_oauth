@@ -98,8 +98,7 @@ class ComOauthControllerOauth extends ComDefaultControllerDefault
 			$model = KFactory::get('site::com.'.$view.'.model.apis');
 			$model->initialize(array($site->consumer_key, $site->consumer_secret));
 			$model->setToken(KRequest::get('get.oauth_token', 'raw'), KRequest::get('session.request_token_secret', 'raw'));
-		 	$model->storeToken($model->getAccessToken());   
-			$model->redirect();
+			$model->redirect($model->storeToken($model->getAccessToken()));
 		}		
 	}
 		
