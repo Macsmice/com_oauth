@@ -40,6 +40,7 @@ class ComOauthControllerOauth2 extends ComOauthControllerOauth
 
 			parse_str($model->getLastResponse());
 		 	$model->setToken($access_token, 0);
+
 		 	KRequest::set('session.service', $view);
 		 	$model->redirect($model->storeToken($access_token));
 		}
@@ -68,7 +69,7 @@ class ComOauthControllerOauth2 extends ComOauthControllerOauth
 				(strpbrk($model->authorizeURL(), '&') ? '&' : '?').
 				'client_id='.$service->consumer_key.
 				'&redirect_uri='.urlencode($model->getRedirectUri()).
-				'&scope=publish_stream,user_about_me'
+				'&scope=publish_stream,user_about_me,email'
 			);
 		}
 	}
