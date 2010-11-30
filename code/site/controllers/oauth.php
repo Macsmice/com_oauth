@@ -23,40 +23,34 @@ class ComOauthControllerOauth extends ComDefaultControllerDefault
 			$user = KFactory::get('lib.joomla.user');
 			$url = '';
 		
-			if ($layout == 'add')
+			$hasToken = false;		
+			
+			if ($user->id)
 			{
-				$url = JRoute::_('index.php?option=com_oauth&view='.KRequest::get('get.service', 'string').'&layout=redirect'); 
+				if (KFactory::tmp('site::com.oauth.model.tokens')
+					->set('service', KRequest::get('get.service', 'string'))
+					->set('service_username', KRequest::get('get.service_username', 'string'))
+					->set('userid', $user->id)
+					->getTotal())
+				{
+					$hasToken = true;
+				}
 			}
 			else
 			{
-				$hasToken = false;		
-				
-				if ($user->id)
+				if (KRequest::get('session.service', 'string') == KRequest::get('get.service', 'string') && KRequest::get('session.oauth_token', 'string'))
 				{
-					if (KFactory::tmp('site::com.oauth.model.tokens')
-						->set('service', KRequest::get('get.service', 'string'))
-						->set('userid', $user->id)
-						->getTotal())
-					{
-						$hasToken = true;
-					}
-				}
-				else
-				{
-					if (KRequest::get('session.service', 'string') == KRequest::get('get.service', 'string') && KRequest::get('session.oauth_token', 'string'))
-					{
-						$hasToken = true;
-					} 
-				}
-				
-				if ($hasToken)
-				{
-					$url = JRoute::_(base64_decode(KRequest::get('get.return_url', 'url')));
-				}
-				else
-				{		
-					$url = JRoute::_('index.php?option=com_oauth&view=oauth&service='.KRequest::get('get.service', 'string').'&layout=redirect'); 
-				}
+					$hasToken = true;
+				} 
+			}
+			
+			if ($hasToken)
+			{
+				$url = JRoute::_(base64_decode(KRequest::get('get.return_url', 'url')));
+			}
+			else
+			{		
+				$url = JRoute::_('index.php?option=com_oauth&view=oauth&service='.KRequest::get('get.service', 'string').'&layout=redirect'); 
 			}
 			
 			KFactory::tmp('lib.joomla.application')->redirect($url);

@@ -97,11 +97,11 @@ class ComOauthModelOauths extends KModelAbstract
 						->set('service_username', $myName)
 						->set('service_id', $myId)
 						->save();
-					return true;
+					return 'The service has been linked to your account';
 				}
 				else 
 				{
-					return 'Error: a person already registered on site using this token';
+					return 'Error: a person already registered on site using this account';
 				}
 			}
 			else
