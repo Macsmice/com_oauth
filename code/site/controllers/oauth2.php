@@ -69,7 +69,7 @@ class ComOauthControllerOauth2 extends ComOauthControllerOauth
 				(strpbrk($model->authorizeURL(), '&') ? '&' : '?').
 				'client_id='.$service->consumer_key.
 				'&redirect_uri='.urlencode($model->getRedirectUri()).
-				'&scope=publish_stream,user_about_me,email'
+				'&scope=publish_stream,user_about_me,email,offline_access'
 			);
 		}
 	}
