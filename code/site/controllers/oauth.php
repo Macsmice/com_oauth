@@ -16,7 +16,7 @@ class ComOauthControllerOauth extends ComDefaultControllerDefault
 		$service = KRequest::get('get.service', 'string');
 		
 		if ($layout == '') 
-		{		
+		{	
 			KRequest::set('session.caller_url', JRoute::_(base64_decode(KRequest::get('get.caller_url', 'url'))));
 			KRequest::set('session.return_url', JRoute::_(base64_decode(KRequest::get('get.return_url', 'url'))));
 			
@@ -27,13 +27,18 @@ class ComOauthControllerOauth extends ComDefaultControllerDefault
 			
 			if ($user->id)
 			{
-				if (KFactory::tmp('site::com.oauth.model.tokens')
-					->set('service', KRequest::get('get.service', 'string'))
-					->set('service_username', KRequest::get('get.service_username', 'string'))
-					->set('userid', $user->id)
-					->getTotal())
+				if (KRequest::get('get.service_username', 'string'))
 				{
-					$hasToken = true;
+					if (KFactory::tmp('site::com.oauth.model.tokens')
+						->set('service', KRequest::get('get.service', 'string'))
+						->set('service_username', KRequest::get('get.service_username', 'string'))
+						->set('userid', $user->id)
+						->getTotal())
+					{
+						echo KRequest::get('get.service', 'string');
+						echo KRequest::get('get.service_username', 'string'); exit();
+						$hasToken = true;
+					}
 				}
 			}
 			else
