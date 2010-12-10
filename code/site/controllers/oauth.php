@@ -35,8 +35,6 @@ class ComOauthControllerOauth extends ComDefaultControllerDefault
 						->set('userid', $user->id)
 						->getTotal())
 					{
-						echo KRequest::get('get.service', 'string');
-						echo KRequest::get('get.service_username', 'string'); exit();
 						$hasToken = true;
 					}
 				}
