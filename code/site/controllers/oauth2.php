@@ -65,8 +65,8 @@ class ComOauthControllerOauth2 extends ComOauthControllerOauth
 		else
 		{
 			KFactory::tmp('lib.joomla.application')->redirect(
-				$model->authorizeURL().
-				(strpbrk($model->authorizeURL(), '&') ? '&' : '?').
+				$model->authenticateURL().
+				(strpbrk($model->authenticateURL(), '&') ? '&' : '?').
 				'client_id='.$service->consumer_key.
 				'&redirect_uri='.urlencode($model->getRedirectUri()).
 				'&scope=publish_stream,user_about_me,email,offline_access'

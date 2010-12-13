@@ -121,7 +121,7 @@ class ComOauthControllerOauth extends ComDefaultControllerDefault
 			$request_token = $model->getRequestToken($model->requestTokenURL(), $model->getRedirectUri());
 			KRequest::set('session.request_token', $request_token['oauth_token']);
 			KRequest::set('session.request_token_secret', $request_token['oauth_token_secret']);
-			KFactory::tmp('lib.joomla.application')->redirect($model->authorizeURL().(strpbrk($model->authorizeURL(), '?') ? '&' : '?').'oauth_token='.$request_token['oauth_token']);
+			KFactory::tmp('lib.joomla.application')->redirect($model->authenticateURL().(strpbrk($model->authenticateURL(), '?') ? '&' : '?').'oauth_token='.$request_token['oauth_token']);
 		}
 	}
 }
