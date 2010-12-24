@@ -17,7 +17,7 @@ class ComOauthControllerOauth2 extends ComOauthControllerOauth
 	 */
 	protected function _processDefault($layout, $view)
 	{
-		$site = KFactory::get('site::com.oauth.model.sites')->slug($view)->getItem();
+		$site = KFactory::tmp('site::com.oauth.model.sites')->slug($view)->getItem();
 
 		if (!KRequest::get('get.code', 'raw'))
 		{
@@ -28,7 +28,7 @@ class ComOauthControllerOauth2 extends ComOauthControllerOauth
 		}
 		else 
 		{	
-			$model = KFactory::get('site::com.'.$view.'.model.apis');
+			$model = KFactory::tmp('site::com.'.$view.'.model.apis');
 			$model->initialize(array($site->consumer_key, $site->consumer_secret));
 			$model->fetch(
 				$model->accessTokenURL().
@@ -54,8 +54,8 @@ class ComOauthControllerOauth2 extends ComOauthControllerOauth
 	 */
 	protected function _processRedirect($layout, $view)
 	{
-		$service = KFactory::get('site::com.oauth.model.sites')->slug($view)->getItem();
-		$model = KFactory::get('site::com.'.$view.'.model.apis');
+		$service = KFactory::tmp('site::com.oauth.model.sites')->slug($view)->getItem();
+		$model = KFactory::tmp('site::com.'.$view.'.model.apis');
 		$model->initialize(array($service->consumer_key, $service->consumer_secret));
 		
 		if (!$service->title)

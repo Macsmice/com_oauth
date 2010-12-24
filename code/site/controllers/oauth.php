@@ -19,54 +19,18 @@ class ComOauthControllerOauth extends ComDefaultControllerDefault
 		{	
 			KRequest::set('session.caller_url', JRoute::_(base64_decode(KRequest::get('get.caller_url', 'url'))));
 			KRequest::set('session.return_url', JRoute::_(base64_decode(KRequest::get('get.return_url', 'url'))));
-			
-			$user = KFactory::get('lib.joomla.user');
-			$url = '';
-		
-			$hasToken = false;		
-			
-			if ($user->id)
-			{
-				if (KRequest::get('get.service_username', 'string'))
-				{
-					if (KFactory::tmp('site::com.oauth.model.tokens')
-						->set('service', KRequest::get('get.service', 'string'))
-						->set('service_username', KRequest::get('get.service_username', 'string'))
-						->set('userid', $user->id)
-						->getTotal())
-					{
-						$hasToken = true;
-					}
-				}
-			}
-			else
-			{
-				if (KRequest::get('session.service', 'string') == KRequest::get('get.service', 'string') && KRequest::get('session.oauth_token', 'string'))
-				{
-					$hasToken = true;
-				} 
-			}
-			
-			if ($hasToken)
-			{
-				$url = JRoute::_(base64_decode(KRequest::get('get.return_url', 'url')));
-			}
-			else
-			{		
-				$url = JRoute::_('index.php?option=com_oauth&view=oauth&service='.KRequest::get('get.service', 'string').'&layout=redirect'); 
-			}
-			
+			$url = JRoute::_('index.php?option=com_oauth&view=oauth&service='.KRequest::get('get.service', 'string').'&layout=redirect'); 			
 			KFactory::tmp('lib.joomla.application')->redirect($url);
 		}
 		else
 		{
 			if ($layout == 'redirect')
 			{
-				KFactory::get('site::com.'.$service.'.controller.api')->_processRedirect($layout, $service);
+				KFactory::tmp('site::com.'.$service.'.controller.api')->_processRedirect($layout, $service);
 			}
 			elseif ($layout == 'default' || $layout == '')
 			{
-				KFactory::get('site::com.'.$service.'.controller.api')->_processDefault($layout, $service);
+				KFactory::tmp('site::com.'.$service.'.controller.api')->_processDefault($layout, $service);
 			}
 		}
 			
@@ -81,7 +45,7 @@ class ComOauthControllerOauth extends ComDefaultControllerDefault
 	 */
 	protected function _processDefault($layout, $view)
 	{
-		$site = KFactory::get('site::com.oauth.model.sites')->slug($view)->getItem();
+		$site = KFactory::tmp('site::com.oauth.model.sites')->slug($view)->getItem();
 
 		if (KRequest::get('session.request_token', 'raw') !== KRequest::get('request.oauth_token', 'raw')) 
 		{	
@@ -92,7 +56,7 @@ class ComOauthControllerOauth extends ComDefaultControllerDefault
 		}
 		else
 		{
-			$model = KFactory::get('site::com.'.$view.'.model.apis');
+			$model = KFactory::tmp('site::com.'.$view.'.model.apis');
 			$model->initialize(array($site->consumer_key, $site->consumer_secret));
 			$model->setToken(KRequest::get('get.oauth_token', 'raw'), KRequest::get('session.request_token_secret', 'raw'));
 			$model->redirect($model->storeToken($model->getAccessToken()));
@@ -107,8 +71,8 @@ class ComOauthControllerOauth extends ComDefaultControllerDefault
 	 */
 	protected function _processRedirect($layout, $service)
 	{
-		$serviceRow = KFactory::get('site::com.oauth.model.sites')->slug($service)->getItem();
-		$model = KFactory::get('site::com.'.$service.'.model.apis');
+		$serviceRow = KFactory::tmp('site::com.oauth.model.sites')->slug($service)->getItem();
+		$model = KFactory::tmp('site::com.'.$service.'.model.apis');
 		$model->initialize(array($serviceRow->consumer_key, $serviceRow->consumer_secret));
 		 
 		if (!$serviceRow->title)

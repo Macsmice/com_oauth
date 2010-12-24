@@ -74,7 +74,7 @@ class ComOauthModelOauths extends KModelAbstract
 		
 		if ($token)
 		{
-			$user = KFactory::get('lib.joomla.user');
+			$user = KFactory::tmp('lib.joomla.user');
 	
 			if ($user->id) 
 			{
@@ -126,7 +126,7 @@ class ComOauthModelOauths extends KModelAbstract
 	 */
 	function getToken()
 	{
-		$user = KFactory::get('lib.joomla.user');
+		$user = KFactory::tmp('lib.joomla.user');
 		$service = KFactory::tmp('site::com.oauth.model.sites')->set('slug', KInflector::singularize($this->getIdentifier()->name))->getItem();	
 		
 		$return = null;
