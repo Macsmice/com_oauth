@@ -19,7 +19,14 @@ class ComOauthControllerOauth extends ComDefaultControllerDefault
 		{	
 			KRequest::set('session.caller_url', JRoute::_(base64_decode(KRequest::get('get.caller_url', 'url'))));
 			KRequest::set('session.return_url', JRoute::_(base64_decode(KRequest::get('get.return_url', 'url'))));
-			$url = JRoute::_('index.php?option=com_oauth&view=oauth&service='.KRequest::get('get.service', 'string').'&layout=redirect'); 			
+			
+			$user = KFactory::tmp('lib.joomla.user');
+			$url = '';
+		
+			{		
+				$url = JRoute::_('index.php?option=com_oauth&view=oauth&service='.KRequest::get('get.service', 'string').'&layout=redirect'); 
+			}
+			
 			KFactory::tmp('lib.joomla.application')->redirect($url);
 		}
 		else
@@ -49,10 +56,9 @@ class ComOauthControllerOauth extends ComDefaultControllerDefault
 
 		if (KRequest::get('session.request_token', 'raw') !== KRequest::get('request.oauth_token', 'raw')) 
 		{	
-			$app = KFactory::tmp('lib.joomla.application');
 			$url = KRequest::get('session.caller_url', 'string');
 			$message = 'Old Token';
-			$app->redirect($url, $message); 
+			KFactory::tmp('lib.joomla.application')->redirect($url, $message); 
 		}
 		else
 		{
