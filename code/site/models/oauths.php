@@ -221,4 +221,5 @@ class ComOauthModelOauths extends KModelAbstract
 	function getMyId() {}
 	function getMyName() {}
 	function canPostStories() {}
+	function testToken() {}
 }
