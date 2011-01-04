@@ -7,4 +7,11 @@
  * @link        http://www.beyounic.com - http://www.joocode.com
  */
 
-echo KFactory::get('site::com.oauth.dispatcher')->dispatch();
+try 
+{ 
+	echo KFactory::get('site::com.oauth.dispatcher')->dispatch();
+} 
+catch (Exception $e) 
+{ 
+	KFactory::get('site::com.error.controller.error')->manage($e);
+}

@@ -16,7 +16,7 @@ class ComOauthControllerToken extends ComDefaultControllerDefault
 		if ($action == 'delete')
 		{
 	  		$return = KRequest::get('post.return', 'url');
-					
+
 			return $result = array(
 				'url' 			=> JRoute::_($return, false),
 			);
