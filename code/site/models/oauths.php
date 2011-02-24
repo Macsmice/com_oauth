@@ -190,6 +190,17 @@ class ComOauthModelOauths extends KModelAbstract
 		return $this->oauthc->getLastResponse();
 	}
 
+	
+	function getOtherAccessTokenParameters()
+	{
+		
+	}
+	
+	function getOtherAuthenticateParameters()
+	{
+		
+	}
+	
 	/**
 	 * 
 	 * Redirect to the workflow after the token has been stored

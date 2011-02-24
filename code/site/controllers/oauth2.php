@@ -27,7 +27,7 @@ class ComOauthControllerOauth2 extends ComOauthControllerOauth
 			$app->redirect($url, $message); 
 		}
 		else 
-		{	
+		{
 			$model = KFactory::tmp('site::com.'.$view.'.model.apis');
 			$model->initialize(array($site->consumer_key, $site->consumer_secret));
 			$model->fetch(
@@ -36,9 +36,11 @@ class ComOauthControllerOauth2 extends ComOauthControllerOauth
 				'client_id='.$site->consumer_key.
 				'&client_secret='.$site->consumer_secret.
 				'&code='.KRequest::get('get.code', 'raw').
-				'&redirect_uri='.urlencode($model->getRedirectUri()));
+				'&redirect_uri='.urlencode($model->getRedirectUri()).
+				$model->getOtherAccessTokenParameters()
+				);
 
-			parse_str($model->getLastResponse());
+			$access_token = $model->extractAccessToken();
 		 	$model->setToken($access_token, 0);
 
 		 	KRequest::set('session.service', $view);
@@ -68,9 +70,9 @@ class ComOauthControllerOauth2 extends ComOauthControllerOauth
 				$model->authenticateURL().
 				(strpbrk($model->authenticateURL(), '&') ? '&' : '?').
 				'client_id='.$service->consumer_key.
+				'&response_type=code'.
 				'&redirect_uri='.urlencode($model->getRedirectUri()).
-				'&scope=publish_stream,user_about_me,email,offline_access'
-			);
+				$model->getOtherAuthenticateParameters());
 		}
 	}
 }

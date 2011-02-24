@@ -8,7 +8,7 @@
  */
 
 try 
-{ 
+{
 	echo KFactory::get('site::com.oauth.dispatcher')->dispatch();
 } 
 catch (Exception $e) 

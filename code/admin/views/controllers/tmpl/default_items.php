@@ -33,7 +33,7 @@
 	</td>
 	<td>
 		<span class="editlinktip hasTip" title="<?= @text('Edit controller') ?>::<?= @escape($controller->message); ?>">
-			<?= KFactory::tmp('site::com.stream.model.targets')->id($controller->stream_target_id)->getItem()->title;?>
+
 		</span>
 	</td>
 </tr>
